@@ -3,37 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Amikin Survival Touch</title>
+    <title>Amikin Survival</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         body { background: #0e1610; color: #fff; overflow: hidden; height: 100vh; width: 100vw; }
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* Profil oynasi */
+        /* Sodda Profil Oynasi (Odam gavdasi + 4 ta rang) */
         #profile-modal {
-            position: fixed; inset: 0; background: rgba(9, 16, 11, 0.95);
+            position: fixed; inset: 0; background: rgba(9, 16, 11, 0.96);
             display: flex; align-items: center; justify-content: center; z-index: 100; touch-action: auto;
         }
-        .modal-card {
-            background: #1a2a1d; border: 2px solid #4caf50; border-radius: 16px;
-            padding: 24px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.75);
+        .profile-box {
+            background: #1a2a1d; border: 2px solid #4caf50; border-radius: 18px;
+            padding: 20px; width: 92%; max-width: 440px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
         }
-        .modal-card h2 { color: #81c784; margin-bottom: 8px; }
-        .modal-card p { font-size: 13px; color: #bbb; margin-bottom: 14px; }
-        .modal-card input {
-            width: 100%; padding: 11px; border-radius: 8px; border: 1px solid #4caf50;
-            background: #0f1811; color: #fff; font-size: 15px; margin-bottom: 14px; outline: none;
+        .profile-box h2 { text-align: center; color: #81c784; font-size: 20px; margin-bottom: 14px; }
+        .profile-layout {
+            display: flex; gap: 16px; align-items: center; margin-bottom: 16px;
         }
-        .color-picker { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
-        .color-dot {
-            width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
-            border: 3px solid transparent; transition: transform 0.15s;
+        .avatar-preview-wrap {
+            flex: 0 0 120px; height: 165px; background: #264d2b;
+            border: 2px solid #66bb6a; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
         }
-        .color-dot.active { border-color: #fff; transform: scale(1.15); }
-        .start-btn {
+        .custom-controls { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .custom-controls input {
+            width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #4caf50;
+            background: #0f1811; color: #fff; font-size: 14px; outline: none;
+        }
+        .opt-label { font-size: 11px; color: #c8e6c9; margin-bottom: 4px; }
+        .swatches { display: flex; gap: 7px; flex-wrap: wrap; }
+        .swatch {
+            width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: transform 0.12s;
+        }
+        .swatch.active { border-color: #fff; transform: scale(1.18); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .enter-btn {
             width: 100%; padding: 12px; background: linear-gradient(135deg, #43a047, #2e7d32);
-            border: none; border-radius: 10px; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer;
+            border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer;
         }
 
         /* Yuqori HUD */
@@ -80,7 +89,7 @@
             border: 1px solid rgba(255,235,59,0.3); text-align: center; max-width: 82%;
         }
 
-        /* Virtual Joystik (Chap pastki burchak) */
+        /* Sensor Joystik */
         #joystick-zone {
             position: fixed; bottom: 22px; left: 22px; width: 124px; height: 124px;
             border-radius: 50%; background: rgba(255, 255, 255, 0.1);
@@ -91,10 +100,9 @@
             width: 50px; height: 50px; border-radius: 50%;
             background: rgba(102, 187, 106, 0.75); border: 2px solid #fff;
             box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-            transform: translate(0px, 0px);
         }
 
-        /* O'ng pastki tugmalar */
+        /* Pastki tugmalar */
         #controls-bottom {
             position: fixed; bottom: 12px; right: 12px;
             display: flex; flex-wrap: wrap; gap: 6px; z-index: 15;
@@ -114,21 +122,63 @@
 </head>
 <body>
 
-<!-- PROFIL OYNASI -->
+<!-- ODAM GAVDASI BILAN SODDA PROFIL KIRISH -->
 <div id="profile-modal">
-    <div class="modal-card">
-        <h2>🐾 Amikin Survival</h2>
-        <p>Qahramon profilingizni yarating</p>
-        <input type="text" id="input-name" placeholder="Ismingizni kiriting" maxlength="16" value="Sarguzashtchi">
-        <div style="font-size: 13px; margin-bottom: 8px; color: #a5d6a7;">Kiyim rangi:</div>
-        <div class="color-picker" id="color-picker">
-            <div class="color-dot active" style="background: #2196f3;" data-color="#2196f3"></div>
-            <div class="color-dot" style="background: #e53935;" data-color="#e53935"></div>
-            <div class="color-dot" style="background: #43a047;" data-color="#43a047"></div>
-            <div class="color-dot" style="background: #fb8c00;" data-color="#fb8c00"></div>
-            <div class="color-dot" style="background: #8e24aa;" data-color="#8e24aa"></div>
+    <div class="profile-box">
+        <h2>Qahramonni tanlang</h2>
+        <div class="profile-layout">
+            <div class="avatar-preview-wrap">
+                <canvas id="preview-canvas" width="110" height="150"></canvas>
+            </div>
+            <div class="custom-controls">
+                <input type="text" id="input-name" placeholder="Ismingiz" maxlength="14" value="Oʻyinchi">
+
+                <div>
+                    <div class="opt-label">Teri rangi</div>
+                    <div class="swatches" id="skin-swatches">
+                        <div class="swatch active" style="background:#ffdbac;" data-val="#ffdbac"></div>
+                        <div class="swatch" style="background:#e0ac69;" data-val="#e0ac69"></div>
+                        <div class="swatch" style="background:#c68642;" data-val="#c68642"></div>
+                        <div class="swatch" style="background:#8d5524;" data-val="#8d5524"></div>
+                        <div class="swatch" style="background:#5c3818;" data-val="#5c3818"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="opt-label">Soch rangi</div>
+                    <div class="swatches" id="hair-swatches">
+                        <div class="swatch active" style="background:#3e2723;" data-val="#3e2723"></div>
+                        <div class="swatch" style="background:#111111;" data-val="#111111"></div>
+                        <div class="swatch" style="background:#fbc02d;" data-val="#fbc02d"></div>
+                        <div class="swatch" style="background:#d84315;" data-val="#d84315"></div>
+                        <div class="swatch" style="background:#90a4ae;" data-val="#90a4ae"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="opt-label">Kiyim rangi</div>
+                    <div class="swatches" id="shirt-swatches">
+                        <div class="swatch active" style="background:#2196f3;" data-val="#2196f3"></div>
+                        <div class="swatch" style="background:#e53935;" data-val="#e53935"></div>
+                        <div class="swatch" style="background:#43a047;" data-val="#43a047"></div>
+                        <div class="swatch" style="background:#fb8c00;" data-val="#fb8c00"></div>
+                        <div class="swatch" style="background:#8e24aa;" data-val="#8e24aa"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="opt-label">Oyoq (shim) rangi</div>
+                    <div class="swatches" id="pants-swatches">
+                        <div class="swatch active" style="background:#263238;" data-val="#263238"></div>
+                        <div class="swatch" style="background:#1565c0;" data-val="#1565c0"></div>
+                        <div class="swatch" style="background:#4e342e;" data-val="#4e342e"></div>
+                        <div class="swatch" style="background:#37474f;" data-val="#37474f"></div>
+                        <div class="swatch" style="background:#1b5e20;" data-val="#1b5e20"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button class="start-btn" onclick="startGame()">Boshlash</button>
+        <button class="enter-btn" onclick="enterGame()">Oʻyinga kirish</button>
     </div>
 </div>
 
@@ -136,7 +186,7 @@
 <div id="hud-top">
     <div class="hud-card">
         <div class="player-header">
-            <span id="hud-name">Sarguzashtchi</span>
+            <span id="hud-name">Oʻyinchi</span>
             <span class="lvl-badge">LVL <span id="hud-lvl">1</span></span>
             <span style="font-size: 11px; color: #ffd54f;">⚔️ <span id="hud-dmg">20</span></span>
         </div>
@@ -158,7 +208,7 @@
         <div>
             <button class="small-btn" style="background:#0288d1;" onclick="toggleTeamPanel()">🐾 Jamoa</button>
             <button class="small-btn" style="background:#2e7d32;" onclick="saveProgress(true)">💾 Saqlash</button>
-            <button class="small-btn" style="background:#b71c1c;" onclick="resetProfile()">🔄 Yangi</button>
+            <button class="small-btn" style="background:#b71c1c;" onclick="resetProfile()">🔄 Profil</button>
         </div>
     </div>
 </div>
@@ -196,6 +246,8 @@
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+const prevCanvas = document.getElementById("preview-canvas");
+const prevCtx = prevCanvas.getContext("2d");
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -205,12 +257,126 @@ window.addEventListener("resize", resize);
 resize();
 
 const WORLD_SIZE = 2500;
-let selectedColor = "#2196f3";
 let gameStarted = false;
 let timeOfDay = 0.2;
 let mountedMonster = null;
 
-// Joystik holati
+// Odam gavdasi ranglari
+let profileStyle = {
+    skin: "#ffdbac",
+    hair: "#3e2723",
+    shirt: "#2196f3",
+    pants: "#263238"
+};
+
+function bindSwatches(containerId, propName) {
+    document.querySelectorAll(`#${containerId} .swatch`).forEach(el => {
+        el.addEventListener("click", () => {
+            document.querySelectorAll(`#${containerId} .swatch`).forEach(s => s.classList.remove("active"));
+            el.classList.add("active");
+            profileStyle[propName] = el.dataset.val;
+            drawPreviewAvatar();
+        });
+    });
+}
+bindSwatches("skin-swatches", "skin");
+bindSwatches("hair-swatches", "hair");
+bindSwatches("shirt-swatches", "shirt");
+bindSwatches("pants-swatches", "pants");
+
+// Odam gavdasini chizish (profil va o'yin uchun umumiy)
+function drawBodyParts(targetCtx, cx, cy, scale, style, walkPhase, swingPhase, dirX, dirY, showShadow) {
+    targetCtx.save();
+    targetCtx.translate(cx, cy);
+    targetCtx.scale(scale, scale);
+
+    const legSwing = Math.sin(walkPhase) * 6;
+    const armSwing = Math.cos(walkPhase) * 5;
+
+    if (showShadow) {
+        targetCtx.fillStyle = "rgba(0,0,0,0.35)";
+        targetCtx.beginPath();
+        targetCtx.ellipse(0, 23, 16, 7, 0, 0, Math.PI * 2);
+        targetCtx.fill();
+    }
+
+    // Oyoqlar (shim rangi)
+    targetCtx.fillStyle = style.pants;
+    targetCtx.strokeStyle = "#111";
+    targetCtx.lineWidth = 1.4;
+    targetCtx.fillRect(-8, 10 + legSwing * 0.4, 6, 13);
+    targetCtx.strokeRect(-8, 10 + legSwing * 0.4, 6, 13);
+    targetCtx.fillRect(2, 10 - legSwing * 0.4, 6, 13);
+    targetCtx.strokeRect(2, 10 - legSwing * 0.4, 6, 13);
+
+    // Tana (kiyim rangi)
+    targetCtx.fillStyle = style.shirt;
+    targetCtx.beginPath();
+    targetCtx.roundRect(-11, -6, 22, 18, 5);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Chap qo'l (teri rangi)
+    targetCtx.fillStyle = style.skin;
+    targetCtx.beginPath();
+    targetCtx.arc(-14, 2 - armSwing * 0.5, 4.5, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Bosh (teri rangi)
+    targetCtx.fillStyle = style.skin;
+    targetCtx.beginPath();
+    targetCtx.arc(0, -15, 10, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Soch (soch rangi)
+    targetCtx.fillStyle = style.hair;
+    targetCtx.beginPath();
+    targetCtx.arc(0, -18, 10.5, Math.PI, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.fillRect(-10, -18, 4, 7);
+    targetCtx.fillRect(6, -18, 4, 7);
+
+    // Ko'zlar
+    targetCtx.fillStyle = "#000";
+    targetCtx.beginPath();
+    targetCtx.arc(-3.5 + dirX * 2, -15 + dirY * 1.5, 1.5, 0, Math.PI * 2);
+    targetCtx.arc(3.5 + dirX * 2, -15 + dirY * 1.5, 1.5, 0, Math.PI * 2);
+    targetCtx.fill();
+
+    // O'ng qo'l va Bolta
+    targetCtx.save();
+    const swingAngle = swingPhase > 0 ? Math.sin((14 - swingPhase) * 0.4) * 1.6 : 0;
+    targetCtx.translate(13, 2);
+    targetCtx.rotate(swingAngle);
+
+    targetCtx.fillStyle = "#8d6e63";
+    targetCtx.fillRect(0, -16, 4, 20);
+    targetCtx.fillStyle = "#cfd8dc";
+    targetCtx.beginPath();
+    targetCtx.moveTo(2, -16);
+    targetCtx.lineTo(12, -20);
+    targetCtx.lineTo(12, -10);
+    targetCtx.closePath();
+    targetCtx.fill();
+
+    targetCtx.fillStyle = style.skin;
+    targetCtx.beginPath();
+    targetCtx.arc(2, 0, 4.5, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+    targetCtx.restore();
+
+    targetCtx.restore();
+}
+
+function drawPreviewAvatar() {
+    prevCtx.clearRect(0, 0, prevCanvas.width, prevCanvas.height);
+    drawBodyParts(prevCtx, prevCanvas.width / 2, prevCanvas.height / 2 + 12, 2.1, profileStyle, 0, 0, 0, 1, true);
+}
+
+// Sensor Joystik
 let joyActive = false;
 let joyDx = 0;
 let joyDy = 0;
@@ -224,13 +390,11 @@ joyZone.addEventListener("pointerdown", e => {
     joyZone.setPointerCapture(e.pointerId);
     updateJoystick(e);
 });
-
 joyZone.addEventListener("pointermove", e => {
     if (!joyActive) return;
     e.stopPropagation();
     updateJoystick(e);
 });
-
 function resetJoystick(e) {
     if (!joyActive) return;
     e.stopPropagation();
@@ -258,17 +422,12 @@ function updateJoystick(e) {
     joyDy = dy / maxJoyRadius;
 }
 
-document.querySelectorAll(".color-dot").forEach(dot => {
-    dot.addEventListener("click", () => {
-        document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
-        dot.classList.add("active");
-        selectedColor = dot.dataset.color;
-    });
-});
-
 let player = {
-    name: "Sarguzashtchi",
-    shirtColor: "#2196f3",
+    name: "Oʻyinchi",
+    skin: "#ffdbac",
+    hair: "#3e2723",
+    shirt: "#2196f3",
+    pants: "#263238",
     x: WORLD_SIZE / 2,
     y: WORLD_SIZE / 2,
     speed: 4.3,
@@ -306,22 +465,32 @@ function showToast(msg) {
     }, 3200);
 }
 
+function syncSwatches(containerId, val) {
+    document.querySelectorAll(`#${containerId} .swatch`).forEach(s => {
+        s.classList.toggle("active", s.dataset.val === val);
+    });
+}
+
 window.addEventListener("load", () => {
-    const saved = localStorage.getItem("amikin_touch_v1");
+    const saved = localStorage.getItem("amikin_simple_profile_v1");
     if (saved) {
         const data = JSON.parse(saved);
-        document.getElementById("input-name").value = data.player.name;
-        selectedColor = data.player.shirtColor;
-        document.querySelectorAll(".color-dot").forEach(d => {
-            d.classList.toggle("active", d.dataset.color === selectedColor);
-        });
+        document.getElementById("input-name").value = data.player.name || "Oʻyinchi";
+        profileStyle.skin = data.player.skin || "#ffdbac";
+        profileStyle.hair = data.player.hair || "#3e2723";
+        profileStyle.shirt = data.player.shirt || "#2196f3";
+        profileStyle.pants = data.player.pants || "#263238";
+        syncSwatches("skin-swatches", profileStyle.skin);
+        syncSwatches("hair-swatches", profileStyle.hair);
+        syncSwatches("shirt-swatches", profileStyle.shirt);
+        syncSwatches("pants-swatches", profileStyle.pants);
     }
+    drawPreviewAvatar();
 });
 
-function startGame() {
-    const nameInput = document.getElementById("input-name").value.trim();
-    const saved = localStorage.getItem("amikin_touch_v1");
-
+function enterGame() {
+    const nameVal = document.getElementById("input-name").value.trim() || "Oʻyinchi";
+    const saved = localStorage.getItem("amikin_simple_profile_v1");
     if (saved) {
         const data = JSON.parse(saved);
         player = { ...player, ...data.player };
@@ -330,8 +499,11 @@ function startGame() {
         timeOfDay = data.timeOfDay ?? 0.2;
     }
 
-    player.name = nameInput || "Sarguzashtchi";
-    player.shirtColor = selectedColor;
+    player.name = nameVal;
+    player.skin = profileStyle.skin;
+    player.hair = profileStyle.hair;
+    player.shirt = profileStyle.shirt;
+    player.pants = profileStyle.pants;
     mountedMonster = null;
 
     document.getElementById("profile-modal").style.display = "none";
@@ -346,6 +518,7 @@ function startGame() {
     if (monsters.length < 12) {
         for (let i = 0; i < 16; i++) spawnWildMonster();
     }
+    saveProgress();
     showToast(`Xush kelibsiz, ${player.name}!`);
 }
 
@@ -356,12 +529,12 @@ function saveProgress(manual = false) {
         monsters: monsters.map(m => ({ ...m, mounted: false })),
         timeOfDay
     };
-    localStorage.setItem("amikin_touch_v1", JSON.stringify(data));
+    localStorage.setItem("amikin_simple_profile_v1", JSON.stringify(data));
     if (manual) showToast("💾 Saqlandi!");
 }
 
 function resetProfile() {
-    localStorage.removeItem("amikin_touch_v1");
+    localStorage.removeItem("amikin_simple_profile_v1");
     location.reload();
 }
 
@@ -623,4 +796,500 @@ function buildWorkbench() {
         player.wood -= 15;
         player.stone -= 10;
         buildings.push({ type: "workbench", x: player.x + player.dirX * 48 - 24, y: player.y + player.dirY * 48 - 24, w: 48, h: 48 });
-        show
+        showToast("🛠️ Dastgoh qurildi!");
+    } else showToast("15 yogʻoch va 10 tosh kerak!");
+}
+
+function craftSphere() {
+    if (player.wood >= 5 && player.stone >= 5) {
+        player.wood -= 5;
+        player.stone -= 5;
+        player.spheres++;
+        showToast("🔮 Shar yasaldi!");
+    } else showToast("5 yogʻoch va 5 tosh kerak!");
+}
+
+function upgradeWeapon() {
+    const hasBench = buildings.some(b => b.type === "workbench" && Math.hypot(player.x - (b.x + 24), player.y - (b.y + 24)) < 115);
+    if (!hasBench) {
+        showToast("Avval Dastgoh quring va yoniga boring!");
+        return;
+    }
+    if (player.wood >= 20 && player.stone >= 20) {
+        player.wood -= 20;
+        player.stone -= 20;
+        player.damage += 10;
+        addParticles(player.x, player.y, "#ffd54f", 16);
+        showToast(`⚔️ Qurol kuchaydi! Zarar: ${player.damage}`);
+        saveProgress();
+    } else showToast("20 yogʻoch va 20 tosh kerak!");
+}
+
+window.addEventListener("keydown", e => {
+    if (!gameStarted) return;
+    const k = e.key.toLowerCase();
+    keys[k] = true;
+    if (e.code === "Space") playerAttack();
+    if (k === "e") tryTame();
+    if (k === "f") eatOrCookFood();
+    if (k === "m") toggleMount();
+    if (k === "b") buildWall();
+    if (k === "h") buildHouse();
+    if (k === "k") buildWorkbench();
+    if (k === "c") craftSphere();
+});
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+canvas.addEventListener("pointerdown", e => {
+    if (!gameStarted) return;
+    const ang = Math.atan2(e.clientY - canvas.height / 2, e.clientX - canvas.width / 2);
+    player.dirX = Math.cos(ang);
+    player.dirY = Math.sin(ang);
+    playerAttack();
+});
+
+function update() {
+    if (!gameStarted) return;
+
+    timeOfDay = (timeOfDay + 0.00018) % 1;
+    const isNight = timeOfDay > 0.65 || timeOfDay < 0.1;
+    document.getElementById("hud-time").innerText = isNight ? "🌙 Tun" : (timeOfDay > 0.5 ? "🌅 Shom" : "☀️ Kunduz");
+
+    player.hunger = Math.max(0, player.hunger - 0.015);
+    if (player.hunger <= 0) {
+        player.hp = Math.max(1, player.hp - 0.04);
+    }
+
+    if (player.swingAnim > 0) player.swingAnim--;
+
+    const currentSpeed = mountedMonster ? player.speed * 1.55 : player.speed;
+    let dx = 0, dy = 0;
+
+    if (joyActive && Math.hypot(joyDx, joyDy) > 0.12) {
+        dx = joyDx;
+        dy = joyDy;
+    } else {
+        if (keys["w"] || keys["arrowup"]) dy -= 1;
+        if (keys["s"] || keys["arrowdown"]) dy += 1;
+        if (keys["a"] || keys["arrowleft"]) dx -= 1;
+        if (keys["d"] || keys["arrowright"]) dx += 1;
+    }
+
+    let moving = false;
+    if (dx !== 0 || dy !== 0) {
+        const len = Math.hypot(dx, dy);
+        const nx = dx / len;
+        const ny = dy / len;
+        const mag = Math.min(1, len);
+        player.dirX = nx;
+        player.dirY = ny;
+        player.x += nx * currentSpeed * mag;
+        player.y += ny * currentSpeed * mag;
+        moving = true;
+    }
+
+    if (moving) player.walkAnim += 0.25;
+    else player.walkAnim = 0;
+
+    player.x = Math.max(45, Math.min(WORLD_SIZE - 45, player.x));
+    player.y = Math.max(45, Math.min(WORLD_SIZE - 45, player.y));
+
+    if (mountedMonster) {
+        mountedMonster.x = player.x;
+        mountedMonster.y = player.y + 8;
+        mountedMonster.dirX = player.dirX >= 0 ? 1 : -1;
+        if (moving) mountedMonster.walkAnim += 0.3;
+    }
+
+    buildings.forEach(b => {
+        if (b.type === "campfire" || b.type === "house") {
+            const cx = b.x + b.w / 2;
+            const cy = b.y + b.h / 2;
+            if (Math.hypot(player.x - cx, player.y - cy) < 115 && player.hp < player.maxHp) {
+                player.hp = Math.min(player.maxHp, player.hp + (b.type === "house" ? 0.35 : 0.16));
+            }
+        }
+    });
+
+    resources.forEach(r => { if (r.shake > 0) r.shake--; });
+
+    monsters.forEach(m => {
+        if (m === mountedMonster) return;
+        if (m.attackCd > 0) m.attackCd--;
+
+        if (m.tamed) {
+            let enemy = monsters.find(o => !o.tamed && Math.hypot(o.x - player.x, o.y - player.y) < 195);
+            if (enemy) {
+                const d = Math.hypot(enemy.x - m.x, enemy.y - m.y);
+                m.dirX = enemy.x >= m.x ? 1 : -1;
+                if (d > 38) {
+                    m.x += ((enemy.x - m.x) / d) * 3.5;
+                    m.y += ((enemy.y - m.y) / d) * 3.5;
+                    m.walkAnim += 0.25;
+                } else if (m.attackCd === 0) {
+                    m.attackCd = 45;
+                    enemy.hp = Math.max(10, enemy.hp - m.dmg);
+                    addParticles(enemy.x, enemy.y, "#00e5ff", 5);
+                }
+                return;
+            }
+
+            let nearRes = resources.find(r => Math.hypot(r.x - player.x, r.y - player.y) < 160);
+            if (nearRes) {
+                const d = Math.hypot(nearRes.x - m.x, nearRes.y - m.y);
+                m.dirX = nearRes.x >= m.x ? 1 : -1;
+                if (d > 42) {
+                    m.x += ((nearRes.x - m.x) / d) * 3.3;
+                    m.y += ((nearRes.y - m.y) / d) * 3.3;
+                    m.walkAnim += 0.25;
+                } else if (m.attackCd === 0) {
+                    m.attackCd = 50;
+                    nearRes.hp -= 15;
+                    nearRes.shake = 5;
+                    addParticles(nearRes.x, nearRes.y, "#a5d6a7", 4);
+                    if (nearRes.hp <= 0) {
+                        if (nearRes.type === "tree") player.wood += 5;
+                        else player.stone += 5;
+                        resources.splice(resources.indexOf(nearRes), 1);
+                        setTimeout(spawnResource, 5000);
+                    }
+                }
+                return;
+            }
+
+            const distP = Math.hypot(player.x - m.x, player.y - m.y);
+            if (distP > 72) {
+                m.dirX = player.x >= m.x ? 1 : -1;
+                m.x += ((player.x - m.x) / distP) * 3.4;
+                m.y += ((player.y - m.y) / distP) * 3.4;
+                m.walkAnim += 0.25;
+            }
+        } else {
+            const aggroRange = isNight ? 220 : 165;
+            const distP = Math.hypot(player.x - m.x, player.y - m.y);
+            if (distP < aggroRange) {
+                m.dirX = player.x >= m.x ? 1 : -1;
+                if (distP > 38) {
+                    m.x += ((player.x - m.x) / distP) * (isNight ? 2.6 : 2.1);
+                    m.y += ((player.y - m.y) / distP) * (isNight ? 2.6 : 2.1);
+                    m.walkAnim += 0.2;
+                } else if (m.attackCd === 0) {
+                    m.attackCd = 65;
+                    player.hp -= m.dmg;
+                    addParticles(player.x, player.y, "#ff5252", 6);
+                    if (player.hp <= 0) {
+                        player.hp = player.maxHp;
+                        player.hunger = 80;
+                        player.x = WORLD_SIZE / 2;
+                        player.y = WORLD_SIZE / 2;
+                        mountedMonster = null;
+                        showToast("💀 Bazaga qaytdingiz!");
+                    }
+                }
+            } else {
+                m.aiTimer--;
+                if (m.aiTimer <= 0) {
+                    m.aiTimer = 80 + Math.random() * 80;
+                    const ang = Math.random() * Math.PI * 2;
+                    m.vx = Math.cos(ang) * 1.1;
+                    m.vy = Math.sin(ang) * 1.1;
+                    m.dirX = m.vx >= 0 ? 1 : -1;
+                }
+                m.x = Math.max(50, Math.min(WORLD_SIZE - 50, m.x + m.vx));
+                m.y = Math.max(50, Math.min(WORLD_SIZE - 50, m.y + m.vy));
+                m.walkAnim += 0.12;
+            }
+        }
+    });
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+    }
+
+    document.getElementById("hud-name").innerText = player.name;
+    document.getElementById("hud-lvl").innerText = player.lvl;
+    document.getElementById("hud-dmg").innerText = player.damage;
+    document.getElementById("hp-fill").style.width = (player.hp / player.maxHp * 100) + "%";
+    document.getElementById("hunger-fill").style.width = (player.hunger / player.maxHunger * 100) + "%";
+    document.getElementById("xp-fill").style.width = (player.xp / player.nextXp * 100) + "%";
+    document.getElementById("hud-wood").innerText = player.wood;
+    document.getElementById("hud-stone").innerText = player.stone;
+    document.getElementById("hud-meat").innerText = player.meat;
+    document.getElementById("hud-spheres").innerText = player.spheres;
+    document.getElementById("hud-pets").innerText = monsters.filter(m => m.tamed).length;
+    document.getElementById("hud-houses").innerText = buildings.filter(b => b.type === "house").length;
+}
+
+function drawHuman(p) {
+    const liftY = mountedMonster ? -14 : 0;
+    drawBodyParts(ctx, p.x, p.y + liftY, 1, p, p.walkAnim, p.swingAnim, p.dirX, p.dirY, !mountedMonster);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(p.name, p.x, p.y + liftY - 32);
+}
+
+function drawMonster(m) {
+    const scale = m === mountedMonster ? 1.25 : 1;
+    ctx.save();
+    ctx.translate(m.x, m.y);
+    ctx.scale(scale, scale);
+
+    const bounce = Math.abs(Math.sin(m.walkAnim)) * 3;
+    const legMove = Math.sin(m.walkAnim) * 4;
+
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.beginPath();
+    ctx.ellipse(0, 16, 18, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.translate(0, -bounce);
+
+    ctx.fillStyle = m.earColor;
+    ctx.beginPath();
+    ctx.arc(-16 * m.dirX, 4, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = m.bodyColor;
+    ctx.fillRect(-11, 8 + legMove * 0.5, 5, 8);
+    ctx.fillRect(-3, 8 - legMove * 0.5, 5, 8);
+    ctx.fillRect(5, 8 + legMove * 0.5, 5, 8);
+
+    ctx.fillStyle = m.bodyColor;
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 16, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = m.tamed ? "#00e5ff" : "#222";
+    ctx.lineWidth = m.tamed ? 2.5 : 1.5;
+    ctx.stroke();
+
+    const headX = 10 * m.dirX;
+    ctx.beginPath();
+    ctx.arc(headX, -6, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = m.earColor;
+    ctx.beginPath();
+    ctx.moveTo(headX - 5, -14);
+    ctx.lineTo(headX - 9, -24);
+    ctx.lineTo(headX - 1, -16);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(headX + 3, -14);
+    ctx.lineTo(headX + 7, -24);
+    ctx.lineTo(headX + 9, -15);
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(headX + 4 * m.dirX, -7, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath();
+    ctx.arc(headX + 5 * m.dirX, -7, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    if (m !== mountedMonster) {
+        ctx.fillStyle = m.tamed ? "#80deea" : "#fff";
+        ctx.font = "bold 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(m.tamed ? `★ ${m.name}` : m.name, m.x, m.y - 34);
+
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(m.x - 20, m.y - 29, 40, 5);
+        ctx.fillStyle = m.tamed ? "#00e676" : "#ff1744";
+        ctx.fillRect(m.x - 20, m.y - 29, 40 * (m.hp / m.maxHp), 5);
+    }
+}
+
+function drawResource(r) {
+    ctx.save();
+    const offsetX = r.shake > 0 ? (Math.random() - 0.5) * 6 : 0;
+    ctx.translate(r.x + offsetX, r.y);
+
+    if (r.type === "tree") {
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.beginPath();
+        ctx.ellipse(0, 22, 24, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#5d4037";
+        ctx.fillRect(-7, 0, 14, 22);
+
+        ctx.fillStyle = "#1b5e20";
+        ctx.beginPath(); ctx.arc(0, -6, 24, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#2e7d32";
+        ctx.beginPath(); ctx.arc(-8, -14, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#43a047";
+        ctx.beginPath(); ctx.arc(7, -16, 17, 0, Math.PI * 2); ctx.fill();
+    } else {
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.beginPath();
+        ctx.ellipse(0, 14, 22, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#757575";
+        ctx.beginPath();
+        ctx.moveTo(-20, 12);
+        ctx.lineTo(-15, -10);
+        ctx.lineTo(4, -16);
+        ctx.lineTo(20, -4);
+        ctx.lineTo(18, 12);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "#424242";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+function drawBuilding(b) {
+    if (b.type === "floor") {
+        ctx.fillStyle = "#8d6e63";
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = "#5d4037";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+    } else if (b.type === "wall") {
+        ctx.fillStyle = "#6d4c41";
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = "#3e2723";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+    } else if (b.type === "campfire") {
+        ctx.fillStyle = "rgba(255, 152, 0, 0.16)";
+        ctx.beginPath(); ctx.arc(b.x + 24, b.y + 24, 115, 0, Math.PI * 2); ctx.fill();
+        ctx.font = "34px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("🔥", b.x + 24, b.y + 34);
+    } else if (b.type === "workbench") {
+        ctx.fillStyle = "#a1887f";
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = "#ffd54f";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+        ctx.font = "28px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("🛠️", b.x + 24, b.y + 34);
+    } else if (b.type === "house") {
+        ctx.fillStyle = "rgba(76, 175, 80, 0.14)";
+        ctx.beginPath(); ctx.arc(b.x + 55, b.y + 55, 115, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = "#d7ccc8";
+        ctx.fillRect(b.x + 10, b.y + 35, b.w - 20, b.h - 35);
+        ctx.strokeStyle = "#4e342e";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(b.x + 10, b.y + 35, b.w - 20, b.h - 35);
+
+        ctx.fillStyle = "#bf360c";
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y + 38);
+        ctx.lineTo(b.x + b.w / 2, b.y);
+        ctx.lineTo(b.x + b.w, b.y + 38);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#5d4037";
+        ctx.fillRect(b.x + b.w / 2 - 12, b.y + b.h - 36, 24, 36);
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const camX = player.x - canvas.width / 2;
+    const camY = player.y - canvas.height / 2;
+
+    ctx.save();
+    ctx.translate(-camX, -camY);
+
+    ctx.fillStyle = "#2b5830";
+    ctx.fillRect(0, 0, WORLD_SIZE, WORLD_SIZE);
+
+    ctx.strokeStyle = "rgba(255,255,255,0.04)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= WORLD_SIZE; x += 80) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, WORLD_SIZE); ctx.stroke();
+    }
+    for (let y = 0; y <= WORLD_SIZE; y += 80) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WORLD_SIZE, y); ctx.stroke();
+    }
+
+    ctx.strokeStyle = "#81c784";
+    ctx.lineWidth = 8;
+    ctx.strokeRect(0, 0, WORLD_SIZE, WORLD_SIZE);
+
+    buildings.forEach(drawBuilding);
+    resources.forEach(drawResource);
+
+    monsters.forEach(m => {
+        if (m !== mountedMonster) drawMonster(m);
+    });
+
+    if (mountedMonster) drawMonster(mountedMonster);
+    drawHuman(player);
+
+    particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    ctx.restore();
+
+    const nightAlpha = (timeOfDay > 0.65 || timeOfDay < 0.1) ? 0.42 : (timeOfDay > 0.5 ? 0.18 : 0);
+    if (nightAlpha > 0) {
+        ctx.fillStyle = `rgba(5, 12, 30, ${nightAlpha})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (gameStarted) {
+        const mapSize = 95;
+        const mapX = canvas.width - mapSize - 10;
+        const mapY = 112;
+        ctx.fillStyle = "rgba(10, 20, 12, 0.82)";
+        ctx.fillRect(mapX, mapY, mapSize, mapSize);
+        ctx.strokeStyle = "#4caf50";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(mapX, mapY, mapSize, mapSize);
+
+        buildings.forEach(b => {
+            if (b.type === "house" || b.type === "campfire") {
+                ctx.fillStyle = "#ffca28";
+                ctx.fillRect(mapX + (b.x / WORLD_SIZE) * mapSize - 2, mapY + (b.y / WORLD_SIZE) * mapSize - 2, 4, 4);
+            }
+        });
+
+        monsters.forEach(m => {
+            ctx.fillStyle = m.tamed ? "#00e5ff" : "#ff5252";
+            ctx.fillRect(mapX + (m.x / WORLD_SIZE) * mapSize - 1.5, mapY + (m.y / WORLD_SIZE) * mapSize - 1.5, 3, 3);
+        });
+
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(mapX + (player.x / WORLD_SIZE) * mapSize, mapY + (player.y / WORLD_SIZE) * mapSize, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>
