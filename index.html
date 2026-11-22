@@ -1,48 +1,30 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class BaseBuilder : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float attackRange = 2.5f;
-    public int attackDamage = 20;
-    public LayerMask interactableLayer;
+    public GameObject wallPrefab; // Quriladigan devor/uy modeli
+    public int woodCost = 10;
 
     void Update()
     {
-        // Harakatlanish
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        Vector3 move = new Vector3(h, 0, v).normalized;
-        transform.Translate(move * moveSpeed * Time.deltaTime, Space.World);
-
-        if (move != Vector3.zero)
-            transform.forward = move;
-
-        // Zarba berish (Daraxt kesish yoki Monstrga hujum)
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            Attack();
+            BuildWall();
         }
     }
 
-    void Attack()
+    void BuildWall()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward, attackRange, interactableLayer);
-        foreach (Collider hit in hits)
+        if (PlayerInventory.Instance.wood >= woodCost)
         {
-            // Agar daraxt yoki tosh bo'lsa
-            ResourceNode resource = hit.GetComponent<ResourceNode>();
-            if (resource != null)
-            {
-                resource.Gather(attackDamage);
-            }
-
-            // Agar monstr bo'lsa
-            WildMonster monster = hit.GetComponent<WildMonster>();
-            if (monster != null)
-            {
-                monster.TakeDamage(attackDamage);
-            }
+            PlayerInventory.Instance.wood -= woodCost;
+            Vector3 buildPos = transform.position + transform.forward * 2f;
+            Instantiate(wallPrefab, buildPos, transform.rotation);
+            Debug.Log("Baza devori qurildi!");
+        }
+        else
+        {
+            Debug.Log("Yetarli yog'och yo'q! (10 ta yog'och kerak)");
         }
     }
 }
