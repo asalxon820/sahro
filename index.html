@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Apokalipsis 3D — Tabiiy Shoxli Daraxtlar va 10x Dunyo</title>
+  <title>Amikin Survival 3D — Bo‘ysundirish, Qurollar va Kuchaytirish Tizimi</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     html, body {
@@ -100,93 +100,127 @@
 
     /* --- O'YIN HUD --- */
     .hud-top {
-      position: fixed; top: 12px; left: 12px; z-index: 10;
+      position: fixed; top: 10px; left: 10px; z-index: 10;
       display: flex; flex-direction: column; gap: 6px; pointer-events: none;
+      width: 255px;
     }
+    .player-card {
+      background: rgba(15, 23, 42, 0.9); border: 2px solid #22c55e;
+      padding: 9px 12px; border-radius: 12px; backdrop-filter: blur(6px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+    .p-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 800; margin-bottom: 5px; }
+    .weapon-tag { font-size: 11px; color: #fde047; margin-bottom: 6px; font-weight: 700; }
+    .lvl-tag { background: #f59e0b; color: #090d16; padding: 1px 7px; border-radius: 6px; font-size: 11px; }
+    .bar-bg { width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
+    .bar-hp { width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #22c55e); transition: width 0.15s; }
+    .bar-hunger { width: 100%; height: 100%; background: linear-gradient(90deg, #f97316, #facc15); transition: width 0.15s; }
+    .bar-xp { width: 0%; height: 100%; background: #38bdf8; transition: width 0.15s; }
+
     .zone-badge {
       background: rgba(15, 23, 42, 0.88); border: 2px solid #f59e0b;
-      padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 700;
-      backdrop-filter: blur(6px);
+      padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .coords-box {
       background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(148, 163, 184, 0.25);
-      padding: 5px 10px; border-radius: 8px; font-size: 12px; color: #cbd5e1;
+      padding: 4px 10px; border-radius: 8px; font-size: 11px; color: #cbd5e1;
     }
 
     .res-panel {
-      position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10;
-      background: rgba(15, 23, 42, 0.88); border: 1px solid rgba(148, 163, 184, 0.3);
-      border-radius: 12px; padding: 8px 14px; display: flex; flex-wrap: wrap;
-      gap: 10px; align-items: center; font-size: 12px; font-weight: 600;
-      backdrop-filter: blur(6px); max-width: 92vw;
+      position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;
+      background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px; padding: 7px 12px; display: flex; flex-wrap: wrap;
+      gap: 8px; align-items: center; font-size: 12px; font-weight: 700;
+      backdrop-filter: blur(6px); max-width: 94vw;
     }
-    .res-item { display: flex; align-items: center; gap: 4px; color: #e2e8f0; }
-    .base-pill {
-      background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b;
-      color: #fde68a; padding: 3px 8px; border-radius: 8px; font-size: 11px;
-    }
-    .profile-open-btn {
-      background: rgba(56, 189, 248, 0.22); border: 1px solid #38bdf8;
-      color: #e0f2fe; padding: 3px 9px; border-radius: 8px; font-size: 11px;
+    .res-item { display: flex; align-items: center; gap: 3px; color: #e2e8f0; }
+    .hud-btn {
+      background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8;
+      color: #e0f2fe; padding: 4px 8px; border-radius: 8px; font-size: 11px;
       font-weight: 700; cursor: pointer;
     }
+    .hud-btn.team-btn { background: rgba(168, 85, 247, 0.25); border-color: #c084fc; color: #f3e8ff; }
+    .hud-btn.save-btn { background: rgba(34, 197, 94, 0.22); border-color: #4ade80; color: #dcfce7; }
 
     .minimap-wrap {
-      position: fixed; top: 12px; right: 12px; z-index: 10;
+      position: fixed; top: 10px; right: 10px; z-index: 10;
       background: rgba(15, 23, 42, 0.88); border: 2px solid rgba(255, 255, 255, 0.22);
       border-radius: 12px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
-    #minimap { display: block; width: 156px; height: 156px; border-radius: 8px; cursor: pointer; }
-    .minimap-caption {
-      text-align: center; font-size: 10px; color: #94a3b8; margin-top: 4px;
+    #minimap { display: block; width: 146px; height: 146px; border-radius: 8px; cursor: pointer; }
+    .minimap-caption { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 3px; }
+
+    /* JAMOA VA KUCHAYTIRISH PANELI */
+    #teamModal {
+      position: fixed; top: 185px; right: 10px; width: 280px; max-height: 55vh; overflow-y: auto;
+      z-index: 25; background: rgba(15, 23, 42, 0.96); border: 2px solid #a855f7;
+      border-radius: 14px; padding: 12px; display: none;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+    }
+    #teamModal h4 { font-size: 13px; color: #d8b4fe; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .pet-row {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 9px; padding: 7px 8px; margin-bottom: 7px; font-size: 11px;
+    }
+    .pet-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .pet-actions { display: flex; gap: 5px; }
+    .pet-btn {
+      flex: 1; background: rgba(168, 85, 247, 0.25); border: 1px solid #c084fc;
+      color: #fff; border-radius: 6px; padding: 3px 6px; font-size: 10px; font-weight: 700; cursor: pointer;
+    }
+    .pet-btn.upg { background: rgba(234, 179, 8, 0.25); border-color: #facc15; color: #fef08a; }
+
+    .toast-banner {
+      position: fixed; top: 58px; left: 50%; transform: translateX(-50%); z-index: 14;
+      background: rgba(15, 23, 42, 0.92); border: 1px solid #facc15;
+      color: #fef08a; padding: 6px 16px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      pointer-events: none; text-align: center; max-width: 90vw;
     }
 
     .action-prompt {
-      position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%); z-index: 12;
-      background: rgba(2, 132, 199, 0.92); border: 1px solid #7dd3fc;
-      color: #fff; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700;
+      position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 12;
+      background: rgba(2, 132, 199, 0.94); border: 1px solid #7dd3fc;
+      color: #fff; padding: 7px 16px; border-radius: 999px; font-size: 12px; font-weight: 700;
       display: none; box-shadow: 0 6px 20px rgba(0,0,0,0.45);
     }
 
-    .controls-hint {
-      position: fixed; bottom: 14px; left: 14px; z-index: 10;
-      background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.25);
-      padding: 8px 12px; border-radius: 10px; font-size: 12px; color: #cbd5e1;
-      pointer-events: none;
+    /* PASTDAGI AMIKIN HARAKAT, QUROL VA QURILISH PANELI */
+    .bottom-dock {
+      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 15;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;
+      background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(148, 163, 184, 0.28);
+      padding: 6px 9px; border-radius: 14px; backdrop-filter: blur(6px);
+      max-width: 97vw;
     }
-    .github-link {
-      position: fixed; bottom: 14px; right: 14px; z-index: 10;
-      background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3);
-      padding: 7px 12px; border-radius: 10px; font-size: 12px;
+    .act-btn {
+      background: #1e293b; color: #f8fafc; border: 1.5px solid #475569;
+      padding: 6px 9px; border-radius: 9px; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: 0.12s; white-space: nowrap;
     }
-    .github-link a { color: #38bdf8; text-decoration: none; font-weight: 600; }
-    .github-link a:hover { text-decoration: underline; }
-
-    .mobile-actions {
-      position: fixed; bottom: 155px; right: 20px; z-index: 16;
-      display: none; flex-direction: column; gap: 10px;
-    }
-    .m-btn {
-      background: rgba(15, 23, 42, 0.9); color: #fff; border: 2px solid #38bdf8;
-      border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 700;
-    }
-    .m-btn.base-btn { border-color: #f59e0b; color: #fde68a; }
+    .act-btn:active { transform: scale(0.94); }
+    .act-btn.atk { border-color: #ef4444; background: rgba(127, 29, 29, 0.85); }
+    .act-btn.tame { border-color: #38bdf8; background: rgba(7, 89, 133, 0.85); }
+    .act-btn.food { border-color: #f59e0b; background: rgba(120, 53, 15, 0.85); }
+    .act-btn.mount { border-color: #c084fc; background: rgba(88, 28, 135, 0.85); }
+    .act-btn.build { border-color: #22c55e; background: rgba(20, 83, 45, 0.85); }
+    .act-btn.tool { border-color: #facc15; background: rgba(113, 63, 18, 0.85); }
 
     .joy-zone {
-      position: fixed; bottom: 24px; right: 24px; width: 120px; height: 120px;
+      position: fixed; bottom: 72px; left: 18px; width: 114px; height: 114px;
       border-radius: 50%; background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.25); z-index: 15;
+      border: 1.5px solid rgba(255, 255, 255, 0.28); z-index: 15;
       display: none; touch-action: none;
     }
     .joy-knob {
-      position: absolute; width: 46px; height: 46px; border-radius: 50%;
-      background: rgba(56, 189, 248, 0.8); border: 2px solid #fff;
-      left: 37px; top: 37px; transform: translate(0px, 0px);
+      position: absolute; width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(56, 189, 248, 0.85); border: 2px solid #fff;
+      left: 35px; top: 35px; transform: translate(0px, 0px);
     }
     @media (hover: none) and (pointer: coarse) {
-      .joy-zone, .mobile-actions { display: flex; }
-      .controls-hint, .github-link { display: none; }
-      .res-panel { top: 88px; }
+      .joy-zone { display: block; }
+      .res-panel { top: 122px; }
+      .toast-banner { top: 175px; }
     }
   </style>
 </head>
@@ -195,8 +229,8 @@
   <div id="profileModal">
     <div class="creator-card">
       <div class="creator-title">
-        <h2>🧬 PROFIL VA QAHRAMON TUZILISHI</h2>
-        <span>O‘yinga kirishdan oldin sozlang (keyin [P] bilan o‘zgartirish mumkin)</span>
+        <h2>🧬 AMIKIN SURVIVAL 3D — PROFIL YARATISH</h2>
+        <span>O‘yinga kirishdan oldin qahramonni sozlang ([P] tugmasi)</span>
       </div>
 
       <div class="controls-col">
@@ -267,14 +301,14 @@
       <div class="preview-col">
         <canvas id="previewCanvas"></canvas>
         <div class="preview-meta">
-          <span class="preview-name" id="previewName">OmonQolgan</span>
+          <span class="preview-name" id="previewName">Behruz820</span>
           <span id="previewMetaText">Erkak • Kalta soch</span>
         </div>
       </div>
 
       <div class="start-row">
         <button type="button" class="btn-random" id="btnRandomProfile">🎲 Tasodifiy</button>
-        <button type="button" class="btn-start" id="btnEnterGame">▶ O‘YINGA KIRISH</button>
+        <button type="button" class="btn-start" id="btnEnterGame">▶ AMIKIN SURVIVALGA KIRISH</button>
       </div>
     </div>
   </div>
@@ -282,39 +316,67 @@
   <!-- --- 2. ASOSIY 3D O'YIN --- -->
   <div id="sceneContainer"></div>
 
+  <!-- YUQORI CHAP HUD: HP, OCHLIK, XP, QUROL, ZONA -->
   <div class="hud-top">
-    <div class="zone-badge" id="zoneBadge">3D Zona: Shahrcha</div>
-    <div class="coords-box" id="coordsBox">X: 0 | Z: 0 | Qahramon: OmonQolgan</div>
+    <div class="player-card">
+      <div class="p-head">
+        <span id="hudPlayerName">Behruz820</span>
+        <span>⚔️ <span id="hudDmg">25</span> <span class="lvl-tag">LVL <span id="hudLvl">1</span></span></span>
+      </div>
+      <div class="weapon-tag" id="hudWeaponName">🪓 Yog‘och Bolta (Lv.1)</div>
+      <div class="bar-bg"><div class="bar-hp" id="barHp"></div></div>
+      <div class="bar-bg" style="height:6px;"><div class="bar-hunger" id="barHunger"></div></div>
+      <div class="bar-bg" style="height:4px; margin-bottom:0;"><div class="bar-xp" id="barXp"></div></div>
+    </div>
+
+    <div class="zone-badge" id="zoneBadge">
+      <span id="zoneText">Zona: Shahrcha</span>
+      <span id="timeText" style="font-size:12px; color:#fde047;">☀️ Kunduz</span>
+    </div>
+    <div class="coords-box" id="coordsBox">X: 0 | Z: 0 | Baza Lv.1</div>
   </div>
 
+  <!-- YUQORI MARKAZ: RESURSLAR, JAMOA VA SAQLASH -->
   <div class="res-panel">
-    <div class="res-item">🪵 Yog‘och: <span id="resWood">0</span></div>
-    <div class="res-item">⚙️ Temir: <span id="resScrap">0</span></div>
-    <div class="res-item">⛽ Yonilg‘i: <span id="resFuel">0</span></div>
-    <div class="res-item">❄️ Muz: <span id="resIce">0</span></div>
-    <div class="res-item">🌊 Dengiz: <span id="resSea">0</span></div>
-    <div class="base-pill" id="baseSummary">🚛 Baza Lv.1 | Ombor: 0</div>
-    <button type="button" class="profile-open-btn" id="btnOpenProfile">👤 Profil [P]</button>
+    <div class="res-item">🪵 <span id="resWood">20</span></div>
+    <div class="res-item">🪨 <span id="resStone">15</span></div>
+    <div class="res-item">⚙️ <span id="resScrap">10</span></div>
+    <div class="res-item">🍖 <span id="resMeat">4</span></div>
+    <div class="res-item">🔮 <span id="resSpheres">5</span></div>
+    <div class="res-item">🐾 <span id="resPets">0</span></div>
+    <button type="button" class="hud-btn team-btn" id="btnToggleTeam">🐾 Jamoa</button>
+    <button type="button" class="hud-btn save-btn" onclick="saveGameState(true)">💾 Saqlash</button>
+    <button type="button" class="hud-btn" id="btnOpenProfile">👤 Profil [P]</button>
   </div>
 
+  <!-- MINIXARITA -->
   <div class="minimap-wrap">
-    <canvas id="minimap" width="156" height="156"></canvas>
-    <div class="minimap-caption">10x Katta 5 Zonalı Xarita</div>
+    <canvas id="minimap" width="146" height="146"></canvas>
+    <div class="minimap-caption">10x Amikin Xaritasi</div>
   </div>
 
+  <!-- JAMOA VA KUCHAYTIRISH OYNASI -->
+  <div id="teamModal">
+    <h4><span>🐾 Jamoa & Evolyutsiya</span> <span style="cursor:pointer;" onclick="toggleTeamModal()">✖</span></h4>
+    <div id="teamList"></div>
+  </div>
+
+  <!-- XABAR VA KO'RSATMA -->
+  <div class="toast-banner" id="toastBanner">Amikin va Jonivorlarni zaiflashtirib [C] bilan bo‘ysundiring! [Z/X] — Kamera</div>
   <div class="action-prompt" id="actionPrompt"></div>
 
-  <div class="controls-hint">
-    <b>WASD</b>: Yurish/Haydash • <b>Space</b>: Resurs yig‘ish • <b>F</b>: Baza • <b>P</b>: Profil • <b>Q/E</b>: Kamera
-  </div>
-
-  <div class="github-link">
-    GitHub: <a href="https://github.com/behruz820" target="_blank" rel="noopener">github.com/behruz820</a>
-  </div>
-
-  <div class="mobile-actions">
-    <button type="button" class="m-btn" id="btnGather">⛏️ Yig‘ish</button>
-    <button type="button" class="m-btn base-btn" id="btnBase">🚛 Baza (F)</button>
+  <!-- PASTDAGI HARAKAT, BO'YSUNDIRISH, QUROL VA QURILISH PANELI -->
+  <div class="bottom-dock">
+    <button type="button" class="act-btn atk" onclick="performAttack()">⚔️ Zarba [E]</button>
+    <button type="button" class="act-btn tame" onclick="tryTameCreature()">🔗 Bo‘ysundirish [C]</button>
+    <button type="button" class="act-btn food" onclick="eatOrCook()">🍖 Ovqat [R]</button>
+    <button type="button" class="act-btn mount" onclick="toggleMountCreature()">🐎 Minish [M]</button>
+    <button type="button" class="act-btn tool" onclick="upgradeWeaponTier()">🪓 Qurolni Kuchaytir [Q]</button>
+    <button type="button" class="act-btn" onclick="craftSphere()">🔮 +2 Shar [5🪵 5🪨]</button>
+    <button type="button" class="act-btn" onclick="interactTruck()">🚛 Baza [F]</button>
+    <button type="button" class="act-btn build" onclick="buildStructure('campfire')">🔥 Gulxan [6🪵]</button>
+    <button type="button" class="act-btn build" onclick="buildStructure('workbench')">🛠️ Dastgoh [12🪵 8🪨]</button>
+    <button type="button" class="act-btn build" onclick="buildStructure('house')">🏠 Uy [25🪵 15🪨]</button>
   </div>
 
   <div class="joy-zone" id="joyZone">
@@ -340,7 +402,7 @@
 
     function loadProfile() {
       try {
-        const saved = JSON.parse(localStorage.getItem("apokalipsis_profile_v1"));
+        const saved = JSON.parse(localStorage.getItem("amikin_3d_profile_v2"));
         return Object.assign({}, defaultProfile, saved || {});
       } catch (e) {
         return Object.assign({}, defaultProfile);
@@ -349,14 +411,21 @@
 
     function saveProfile(p) {
       try {
-        localStorage.setItem("apokalipsis_profile_v1", JSON.stringify(p));
+        localStorage.setItem("amikin_3d_profile_v2", JSON.stringify(p));
       } catch (e) {}
     }
 
     const profile = loadProfile();
 
-    // --- ODAM TUZILISHINI YIG'UVCHI FUNKSIYA ---
-    function buildHumanCharacter(prof, scale = 1) {
+    // --- QUROL DARAJALARI ---
+    const weaponTiers = [
+      { tier: 1, name: "🪓 Yog‘och Bolta", dmg: 25, color: 0xcbd5e1, scale: 1.0, costWood: 10, costStone: 10, costScrap: 0 },
+      { tier: 2, name: "⚒️ Temir Bolta", dmg: 45, color: 0x38bdf8, scale: 1.25, costWood: 20, costStone: 20, costScrap: 8 },
+      { tier: 3, name: "⚡ Kristal Jang Boltasi", dmg: 78, color: 0xfacc15, scale: 1.5, costWood: 0, costStone: 0, costScrap: 0 }
+    ];
+
+    // --- ODAM TUZILISHI VA QUROL ---
+    function buildHumanCharacter(prof, weaponTier = 1, scale = 1) {
       const root = new THREE.Group();
 
       const skinMat = new THREE.MeshStandardMaterial({
@@ -371,16 +440,8 @@
         metalness: 0.1
       });
 
-      const pantsMat = new THREE.MeshStandardMaterial({
-        color: 0x1e293b,
-        roughness: 0.8
-      });
-
-      const hairMat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(prof.hairColor),
-        roughness: 0.6
-      });
-
+      const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+      const hairMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(prof.hairColor), roughness: 0.6 });
       const isFemale = prof.gender === "female";
 
       const legW = isFemale ? 4.5 : 5.5;
@@ -405,10 +466,41 @@
       leftArm.rotation.z = 0.12;
       leftArm.castShadow = true;
 
+      const rightArmPivot = new THREE.Group();
+      rightArmPivot.position.set(isFemale ? 12 : 15, 33, 0);
+
       const rightArm = new THREE.Mesh(armGeo, skinMat);
-      rightArm.position.set(isFemale ? 12 : 15, 26, 0);
-      rightArm.rotation.z = -0.12;
+      rightArm.position.set(0, -7, 0);
+      rightArm.rotation.z = -0.1;
       rightArm.castShadow = true;
+      rightArmPivot.add(rightArm);
+
+      // Qurol darajasiga mos bolta
+      const wSpec = weaponTiers[Math.min(weaponTiers.length - 1, Math.max(0, weaponTier - 1))];
+      const axeGroup = new THREE.Group();
+      axeGroup.position.set(0, -14, 4);
+      axeGroup.scale.setScalar(wSpec.scale);
+
+      const axeHandle = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.1, 1.3, 24, 8),
+        new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85 })
+      );
+      axeHandle.rotation.x = Math.PI / 2.2;
+      axeHandle.position.z = 8;
+
+      const axeBlade = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 8.5, 7.5),
+        new THREE.MeshStandardMaterial({
+          color: wSpec.color,
+          emissive: wSpec.tier === 3 ? 0xeab308 : 0x000000,
+          emissiveIntensity: wSpec.tier === 3 ? 0.5 : 0,
+          metalness: 0.75,
+          roughness: 0.22
+        })
+      );
+      axeBlade.position.set(0, 2.5, 16);
+      axeGroup.add(axeHandle, axeBlade);
+      rightArmPivot.add(axeGroup);
 
       const headGroup = new THREE.Group();
       headGroup.position.y = 43;
@@ -464,8 +556,8 @@
       }
 
       headGroup.add(hairGroup);
-      root.add(leftLeg, rightLeg, torso, leftArm, rightArm, headGroup);
-      root.userData = { leftLeg, rightLeg, leftArm, rightArm };
+      root.add(leftLeg, rightLeg, torso, leftArm, rightArmPivot, headGroup);
+      root.userData = { leftLeg, rightLeg, leftArm, rightArmPivot };
       root.scale.setScalar(scale);
       return root;
     }
@@ -494,54 +586,43 @@
     standMesh.position.y = -1.5;
     pScene.add(standMesh);
 
-    let previewChar = buildHumanCharacter(profile, 1);
+    let previewChar = buildHumanCharacter(profile, 1, 1);
     pScene.add(previewChar);
 
     function syncPreviewUI() {
       document.getElementById("inpUsername").value = profile.username;
-      document.getElementById("previewName").textContent = profile.username || "Nomsiz";
+      document.getElementById("previewName").textContent = profile.username || "Behruz820";
 
       const gMap = { male: "Erkak", female: "Ayol", cyborg: "Kiborg" };
       const hMap = { short: "Kalta soch", spiky: "Tik soch", long: "Uzun soch", mohawk: "Irokez", bald: "Taqir bosh" };
       document.getElementById("previewMetaText").textContent = `${gMap[profile.gender]} • ${hMap[profile.hairStyle]}`;
 
-      document.querySelectorAll("#genderOptions .opt-btn").forEach(b => {
-        b.classList.toggle("active", b.dataset.val === profile.gender);
-      });
-      document.querySelectorAll("#hairStyleOptions .opt-btn").forEach(b => {
-        b.classList.toggle("active", b.dataset.val === profile.hairStyle);
-      });
-      document.querySelectorAll("#hairColorSwatches .swatch").forEach(s => {
-        s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.hairColor.toLowerCase());
-      });
-      document.querySelectorAll("#clothColorSwatches .swatch").forEach(s => {
-        s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.clothColor.toLowerCase());
-      });
-      document.querySelectorAll("#skinColorSwatches .swatch").forEach(s => {
-        s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.skinColor.toLowerCase());
-      });
+      document.querySelectorAll("#genderOptions .opt-btn").forEach(b => b.classList.toggle("active", b.dataset.val === profile.gender));
+      document.querySelectorAll("#hairStyleOptions .opt-btn").forEach(b => b.classList.toggle("active", b.dataset.val === profile.hairStyle));
+      document.querySelectorAll("#hairColorSwatches .swatch").forEach(s => s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.hairColor.toLowerCase()));
+      document.querySelectorAll("#clothColorSwatches .swatch").forEach(s => s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.clothColor.toLowerCase()));
+      document.querySelectorAll("#skinColorSwatches .swatch").forEach(s => s.classList.toggle("active", s.dataset.color.toLowerCase() === profile.skinColor.toLowerCase()));
 
       pScene.remove(previewChar);
-      previewChar = buildHumanCharacter(profile, 1);
+      previewChar = buildHumanCharacter(profile, 1, 1);
       pScene.add(previewChar);
     }
 
     // --- ASOSIY 3D DUNYO ---
     const container = document.getElementById("sceneContainer");
-    const zoneBadge = document.getElementById("zoneBadge");
-    const coordsBox = document.getElementById("coordsBox");
     const miniCanvas = document.getElementById("minimap");
     const mctx = miniCanvas.getContext("2d");
     const actionPrompt = document.getElementById("actionPrompt");
+    const toastBanner = document.getElementById("toastBanner");
 
-    const resEl = {
-      wood: document.getElementById("resWood"),
-      scrap: document.getElementById("resScrap"),
-      fuel: document.getElementById("resFuel"),
-      ice: document.getElementById("resIce"),
-      sea: document.getElementById("resSea"),
-      base: document.getElementById("baseSummary")
-    };
+    let toastTimer = null;
+    function showToast(msg) {
+      toastBanner.textContent = msg;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastBanner.textContent = "Amikin va Jonivorlarni zaiflashtirib [C] bilan bo‘ysundiring! [Z/X] — Kamera";
+      }, 3600);
+    }
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0f172a);
@@ -584,9 +665,7 @@
     scene.add(dirLight.target);
 
     function getZone(x, z) {
-      if (Math.hypot(x, z) <= TOWN_RADIUS) {
-        return { id: "town", name: "Shahrcha", color: "#f59e0b" };
-      }
+      if (Math.hypot(x, z) <= TOWN_RADIUS) return { id: "town", name: "Shahrcha", color: "#f59e0b" };
       if (x < 0 && z < 0) return { id: "sea", name: "Dengiz", color: "#0284c7" };
       if (x >= 0 && z < 0) return { id: "desert", name: "Cho‘l", color: "#eab308" };
       if (x < 0 && z >= 0) return { id: "snow", name: "Qorli tog‘", color: "#e2e8f0" };
@@ -606,9 +685,7 @@
     // 5 ta 3D zona
     const seaGeo = new THREE.PlaneGeometry(HALF, HALF, 24, 24);
     seaGeo.rotateX(-Math.PI / 2);
-    const seaMesh = new THREE.Mesh(seaGeo, new THREE.MeshStandardMaterial({
-      color: 0x0284c7, roughness: 0.25, metalness: 0.35
-    }));
+    const seaMesh = new THREE.Mesh(seaGeo, new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.25, metalness: 0.35 }));
     seaMesh.position.set(-HALF / 2, -2, -HALF / 2);
     seaMesh.receiveShadow = true;
     scene.add(seaMesh);
@@ -692,7 +769,8 @@
       scene.add(roof);
     }
 
-    // --- TABIIY OBYEKTLAR VA KO'P QATLAMLI SHOXLI DARAXTLAR ---
+    // --- TABIIY OBYEKTLAR VA SHOXLI DARAXTLAR ---
+    const harvestableProps = [];
     const islandMat = new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.9 });
     const cactusMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.7 });
     const rockMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.85 });
@@ -701,36 +779,27 @@
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3419, roughness: 0.92 });
     const branchMat = new THREE.MeshStandardMaterial({ color: 0x6b3e1f, roughness: 0.9 });
     const canopyMats = [
-      new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.82 }), // To'q o'rmon yashili
-      new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.78 }), // Tabiiy barg yashili
-      new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.8 }),  // Chuqur barg rangi
-      new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.75 })  // Yuqori yorug' barglar
+      new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.82 }),
+      new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.78 }),
+      new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.8 }),
+      new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.75 })
     ];
-
     const foliageBlobGeo = new THREE.DodecahedronGeometry(1, 1);
 
     function createRealisticForestTree(hScale) {
       const tree = new THREE.Group();
-      const isBroadleaf = rand() > 0.28; // 72% keng shoxli daraxt, 28% qarag'ay/archa
+      const isBroadleaf = rand() > 0.28;
 
-      // 1. Asosiy tana (ildizga yaqin biroz yo'g'on, yuqoriga ingichkalashadi)
       const trunkH = (isBroadleaf ? 44 : 40) * hScale;
-      const trunk = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.1 * hScale, 2.5 * hScale, trunkH, 9),
-        trunkMat
-      );
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.1 * hScale, 2.5 * hScale, trunkH, 9), trunkMat);
       trunk.position.y = trunkH / 2;
       trunk.castShadow = true;
       trunk.receiveShadow = true;
       tree.add(trunk);
 
-      // Ildiz tayanchlari
       for (let r = 0; r < 3; r++) {
         const rAng = (r / 3) * Math.PI * 2 + rand() * 0.6;
-        const root = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.5 * hScale, 1.3 * hScale, 9 * hScale, 6),
-          trunkMat
-        );
+        const root = new THREE.Mesh(new THREE.CylinderGeometry(0.5 * hScale, 1.3 * hScale, 9 * hScale, 6), trunkMat);
         root.position.set(Math.cos(rAng) * 1.6 * hScale, 3.5 * hScale, Math.sin(rAng) * 1.6 * hScale);
         root.rotation.z = -Math.cos(rAng) * 0.42;
         root.rotation.x = Math.sin(rAng) * 0.42;
@@ -738,7 +807,6 @@
       }
 
       if (isBroadleaf) {
-        // 2. Tanadan ajralib chiquvchi 4 ta asosiy yon shox va ularning barg to'plamlari
         const branchCount = 4;
         for (let b = 0; b < branchCount; b++) {
           const azim = (b / branchCount) * Math.PI * 2 + (rand() - 0.5) * 0.55;
@@ -750,36 +818,24 @@
           branchPivot.position.set(0, startY, 0);
           branchPivot.rotation.y = azim;
 
-          const branchMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.45 * hScale, 0.95 * hScale, bLen, 7),
-            branchMat
-          );
+          const branchMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.45 * hScale, 0.95 * hScale, bLen, 7), branchMat);
           branchMesh.position.set(Math.sin(tilt) * (bLen / 2), Math.cos(tilt) * (bLen / 2), 0);
           branchMesh.rotation.z = -tilt;
           branchMesh.castShadow = true;
           branchPivot.add(branchMesh);
 
-          // Shox uchidagi asosiy barg to'plami
           const tipX = Math.sin(tilt) * bLen;
           const tipY = Math.cos(tilt) * bLen;
 
-          const leafCluster1 = new THREE.Mesh(
-            foliageBlobGeo,
-            canopyMats[b % canopyMats.length]
-          );
+          const leafCluster1 = new THREE.Mesh(foliageBlobGeo, canopyMats[b % canopyMats.length]);
           const r1 = (9.5 + rand() * 4.5) * hScale;
           leafCluster1.scale.set(r1 * 1.25, r1 * 0.85, r1 * 1.15);
           leafCluster1.position.set(tipX, tipY + 2 * hScale, 0);
           leafCluster1.rotation.set(rand(), rand(), rand());
           leafCluster1.castShadow = true;
-          leafCluster1.receiveShadow = true;
           branchPivot.add(leafCluster1);
 
-          // Yon kichik shoxcha va ikkilamchi barg qatlami
-          const leafCluster2 = new THREE.Mesh(
-            foliageBlobGeo,
-            canopyMats[(b + 1) % canopyMats.length]
-          );
+          const leafCluster2 = new THREE.Mesh(foliageBlobGeo, canopyMats[(b + 1) % canopyMats.length]);
           const r2 = (7 + rand() * 3.5) * hScale;
           leafCluster2.scale.set(r2 * 1.2, r2 * 0.8, r2 * 1.1);
           leafCluster2.position.set(tipX * 0.72, tipY + 5.5 * hScale, (rand() - 0.5) * 6 * hScale);
@@ -789,14 +845,11 @@
           tree.add(branchPivot);
         }
 
-        // 3. Tepadagi markaziy toj barg qatlamlari (quyosh nuri tushadigan yuqori qism)
         const crownTop = new THREE.Mesh(foliageBlobGeo, canopyMats[3]);
         const topR = (13.5 + rand() * 4) * hScale;
         crownTop.scale.set(topR * 1.3, topR * 0.95, topR * 1.25);
         crownTop.position.set(0, trunkH + 9 * hScale, 0);
-        crownTop.rotation.set(rand(), rand(), rand());
         crownTop.castShadow = true;
-        crownTop.receiveShadow = true;
         tree.add(crownTop);
 
         const crownMid = new THREE.Mesh(foliageBlobGeo, canopyMats[1]);
@@ -806,7 +859,6 @@
         crownMid.castShadow = true;
         tree.add(crownMid);
       } else {
-        // Ko'p qavatli tabiiy qarag'ay / archa
         const tiers = 5;
         for (let t = 0; t < tiers; t++) {
           const ratio = t / (tiers - 1);
@@ -814,18 +866,13 @@
           const tierR = (15.5 * (1 - ratio * 0.68) + 3.2) * hScale;
           const tierH = (22 * (1 - ratio * 0.45) + 8) * hScale;
 
-          const tierMesh = new THREE.Mesh(
-            new THREE.ConeGeometry(tierR, tierH, 9),
-            canopyMats[t % canopyMats.length]
-          );
+          const tierMesh = new THREE.Mesh(new THREE.ConeGeometry(tierR, tierH, 9), canopyMats[t % canopyMats.length]);
           tierMesh.position.y = tierY;
           tierMesh.rotation.y = t * 0.7;
           tierMesh.castShadow = true;
-          tierMesh.receiveShadow = true;
           tree.add(tierMesh);
         }
       }
-
       return tree;
     }
 
@@ -851,6 +898,7 @@
         g.add(body);
         g.position.set(px, 0, pz);
         scene.add(g);
+        harvestableProps.push({ mesh: g, type: "wood", x: px, z: pz, hp: 50, maxHp: 50, active: true, respawn: 0 });
       } else if (z.id === "snow") {
         const s = 3.5 + rand() * 6.5;
         const g = new THREE.Group();
@@ -870,9 +918,140 @@
         forestTree.position.set(px, 0, pz);
         forestTree.rotation.y = rand() * Math.PI * 2;
         scene.add(forestTree);
+        harvestableProps.push({ mesh: forestTree, type: "wood", x: px, z: pz, hp: 60, maxHp: 60, active: true, respawn: 0 });
       }
     }
 
+    // --- KRISTALLAR VA TOSH KONLARI ---
+    const crystalNodes = [];
+    const resConfig = {
+      wood:  { color: 0x92400e, label: "Yog‘och" },
+      stone: { color: 0x94a3b8, label: "Tosh" },
+      scrap: { color: 0xf59e0b, label: "Temir / Yonilg‘i" },
+      meat:  { color: 0xf97316, label: "Go‘sht / Meva" }
+    };
+
+    for (let i = 0; i < 450; i++) {
+      const rx = -HALF + 800 + rand() * (WORLD_SIZE - 1600);
+      const rz = -HALF + 800 + rand() * (WORLD_SIZE - 1600);
+      const z = getZone(rx, rz);
+      let type = "scrap";
+      if (z.id === "forest") type = rand() > 0.45 ? "stone" : "meat";
+      else if (z.id === "snow") type = "stone";
+      else if (z.id === "desert") type = "scrap";
+      else if (z.id === "sea") type = "meat";
+
+      const mesh = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(18, 0),
+        new THREE.MeshStandardMaterial({
+          color: resConfig[type].color,
+          emissive: resConfig[type].color,
+          emissiveIntensity: 0.22,
+          roughness: 0.45
+        })
+      );
+      mesh.position.set(rx, 14, rz);
+      mesh.castShadow = true;
+      scene.add(mesh);
+      crystalNodes.push({ mesh, type, x: rx, z: rz, active: true, respawnTimer: 0 });
+    }
+
+    // --- AMIKINLAR VA YOVVOYI JONIVORLAR TIZIMI ---
+    const creatureSpecies = {
+      forest: { name: "Verdant", kind: "Amikin", body: 0x22c55e, ear: 0xbbf7d0, hp: 100, dmg: 8 },
+      desert: { name: "Flamik",  kind: "Amikin", body: 0xf97316, ear: 0xfef08a, hp: 110, dmg: 10 },
+      snow:   { name: "Frostik", kind: "Amikin", body: 0x38bdf8, ear: 0xffffff, hp: 120, dmg: 9 },
+      sea:    { name: "Aquarin", kind: "Amikin", body: 0x0284c7, ear: 0x7dd3fc, hp: 105, dmg: 8 },
+      town:   { name: "Voltik",  kind: "Amikin", body: 0xfacc15, ear: 0xfef9c3, hp: 115, dmg: 11 },
+      wolf:   { name: "Yovvoyi Bo‘ri", kind: "Jonivor", body: 0x475569, ear: 0x94a3b8, hp: 130, dmg: 12 }
+    };
+
+    function createCreatureMesh(sp, isWolf = false) {
+      const group = new THREE.Group();
+      const bodyMat = new THREE.MeshStandardMaterial({ color: sp.body, roughness: 0.45 });
+      const earMat = new THREE.MeshStandardMaterial({ color: sp.ear, roughness: 0.4 });
+      const eyeMat = new THREE.MeshStandardMaterial({ color: isWolf ? 0xef4444 : 0x0f172a });
+
+      const body = new THREE.Mesh(new THREE.SphereGeometry(isWolf ? 13 : 12, 14, 12), bodyMat);
+      body.scale.set(0.92, 0.82, isWolf ? 1.55 : 1.3);
+      body.position.y = 12;
+      body.castShadow = true;
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(isWolf ? 9.5 : 9, 14, 12), bodyMat);
+      head.position.set(0, 19, isWolf ? 13 : 11);
+      head.castShadow = true;
+
+      const earL = new THREE.Mesh(new THREE.ConeGeometry(3.2, 10, 6), earMat);
+      earL.position.set(-4.5, 28, isWolf ? 12 : 10);
+      earL.rotation.z = 0.25;
+      const earR = new THREE.Mesh(new THREE.ConeGeometry(3.2, 10, 6), earMat);
+      earR.position.set(4.5, 28, isWolf ? 12 : 10);
+      earR.rotation.z = -0.25;
+
+      const tail = new THREE.Mesh(new THREE.ConeGeometry(3.5, 14, 7), earMat);
+      tail.position.set(0, 16, -17);
+      tail.rotation.x = -0.6;
+
+      const eyeL = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), eyeMat);
+      eyeL.position.set(-3.5, 20, isWolf ? 21 : 18.8);
+      const eyeR = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), eyeMat);
+      eyeR.position.set(3.5, 20, isWolf ? 21 : 18.8);
+
+      // Bo'ysundirilganlik / Evolyutsiya halqasi
+      const collar = new THREE.Mesh(
+        new THREE.TorusGeometry(9.5, 1.3, 8, 22),
+        new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x0284c7, emissiveIntensity: 0.85 })
+      );
+      collar.rotation.x = Math.PI / 2.3;
+      collar.position.set(0, 15, 6);
+      collar.visible = false;
+
+      group.add(body, head, earL, earR, tail, eyeL, eyeR, collar);
+      group.userData = { collar, body, head };
+      return group;
+    }
+
+    const creatures = [];
+    function spawnCreatureAt(x, z, forceWolf = false) {
+      const zone = getZone(x, z);
+      const sp = forceWolf ? creatureSpecies.wolf : (creatureSpecies[zone.id] || creatureSpecies.forest);
+      const mesh = createCreatureMesh(sp, forceWolf);
+      mesh.position.set(x, 4, z);
+      scene.add(mesh);
+      creatures.push({
+        name: sp.name,
+        kind: sp.kind,
+        isWolf: forceWolf,
+        mesh,
+        x, z,
+        lvl: 1,
+        evolved: false,
+        hp: sp.hp,
+        maxHp: sp.hp,
+        dmg: sp.dmg,
+        tamed: false,
+        vx: 0, vz: 0,
+        aiTimer: 0,
+        atkCd: 0
+      });
+    }
+
+    // 130 ta Amikin + 45 ta Yovvoyi Bo'ri (Jonivor)
+    for (let i = 0; i < 175; i++) {
+      let cx, cz;
+      const isWolf = i >= 130;
+      if (i < 12) {
+        const ang = (i / 12) * Math.PI * 2;
+        cx = 220 + Math.cos(ang) * (420 + rand() * 850);
+        cz = 220 + Math.sin(ang) * (420 + rand() * 850);
+      } else {
+        cx = -HALF + 1000 + rand() * (WORLD_SIZE - 2000);
+        cz = -HALF + 1000 + rand() * (WORLD_SIZE - 2000);
+      }
+      spawnCreatureAt(cx, cz, isWolf);
+    }
+
+    // --- DUNYO CHEGARASI ---
     const borderBox = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.BoxGeometry(WORLD_SIZE, 300, WORLD_SIZE)),
       new THREE.LineBasicMaterial({ color: 0xef4444 })
@@ -880,19 +1059,12 @@
     borderBox.position.set(0, 150, 0);
     scene.add(borderBox);
 
-    // Qahramon konteyneri
+    // --- QAHRAMON KONTEYNERI ---
     const playerWrapper = new THREE.Group();
-    let playerCharacterMesh = buildHumanCharacter(profile, 1);
+    let playerCharacterMesh = buildHumanCharacter(profile, 1, 1);
     playerWrapper.add(playerCharacterMesh);
     playerWrapper.position.set(220, 4, 220);
     scene.add(playerWrapper);
-
-    function applyProfileToWorld() {
-      playerWrapper.remove(playerCharacterMesh);
-      playerCharacterMesh = buildHumanCharacter(profile, 1);
-      playerWrapper.add(playerCharacterMesh);
-      saveProfile(profile);
-    }
 
     // --- KO'CHMA BAZA (YUK MASHINASI) ---
     const truckGroup = new THREE.Group();
@@ -923,52 +1095,507 @@
     truckGroup.position.set(420, 4, 420);
     scene.add(truckGroup);
 
-    // --- YIG'ILADIGAN RESURSLAR ---
-    const resourceNodes = [];
-    const resConfig = {
-      wood:  { color: 0x92400e, label: "Yog‘och" },
-      scrap: { color: 0x94a3b8, label: "Temir" },
-      fuel:  { color: 0xeab308, label: "Yonilg‘i" },
-      ice:   { color: 0xbae6fd, label: "Muz" },
-      sea:   { color: 0x38bdf8, label: "Dengiz kristali" }
-    };
+    // --- QURILGAN INSHOOTLAR ---
+    const builtStructures = [];
 
-    for (let i = 0; i < 420; i++) {
-      const rx = -HALF + 800 + rand() * (WORLD_SIZE - 1600);
-      const rz = -HALF + 800 + rand() * (WORLD_SIZE - 1600);
-      const z = getZone(rx, rz);
-      let type = "scrap";
-      if (z.id === "forest") type = "wood";
-      else if (z.id === "desert") type = "fuel";
-      else if (z.id === "snow") type = "ice";
-      else if (z.id === "sea") type = "sea";
-
-      const mesh = new THREE.Mesh(
-        new THREE.OctahedronGeometry(26, 0),
-        new THREE.MeshStandardMaterial({
-          color: resConfig[type].color,
-          emissive: resConfig[type].color,
-          emissiveIntensity: 0.25,
-          roughness: 0.35
-        })
-      );
-      mesh.position.set(rx, 28, rz);
-      mesh.castShadow = true;
-      scene.add(mesh);
-      resourceNodes.push({ mesh, type, x: rx, z: rz, active: true, respawnTimer: 0 });
+    function spawnBuildingMesh(type, x, z) {
+      const g = new THREE.Group();
+      if (type === "campfire") {
+        const stones = new THREE.Mesh(new THREE.TorusGeometry(14, 3.2, 8, 14), new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.9 }));
+        stones.rotation.x = Math.PI / 2;
+        stones.position.y = 3;
+        const flame = new THREE.Mesh(new THREE.ConeGeometry(8, 22, 8), new THREE.MeshStandardMaterial({ color: 0xf97316, emissive: 0xea580c, emissiveIntensity: 0.9 }));
+        flame.position.y = 11;
+        g.add(stones, flame);
+      } else if (type === "workbench") {
+        const table = new THREE.Mesh(new THREE.BoxGeometry(36, 18, 24), new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.8 }));
+        table.position.y = 9;
+        table.castShadow = true;
+        const anvil = new THREE.Mesh(new THREE.BoxGeometry(12, 8, 8), new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.6 }));
+        anvil.position.y = 22;
+        g.add(table, anvil);
+      } else if (type === "house") {
+        const walls = new THREE.Mesh(new THREE.BoxGeometry(90, 56, 90), new THREE.MeshStandardMaterial({ color: 0xd6d3d1, roughness: 0.85 }));
+        walls.position.y = 28;
+        walls.castShadow = true;
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(72, 38, 4), new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.7 }));
+        roof.position.y = 75;
+        roof.rotation.y = Math.PI / 4;
+        roof.castShadow = true;
+        g.add(walls, roof);
+      }
+      g.position.set(x, 4, z);
+      scene.add(g);
+      builtStructures.push({ type, x, z, mesh: g });
     }
 
-    // --- O'YIN HOLATI VA INTERFEYS ---
-    const inventory = { wood: 0, scrap: 0, fuel: 0, ice: 0, sea: 0 };
-    const baseState = { level: 1, storage: 0, driving: false };
+    spawnBuildingMesh("campfire", 130, 150);
 
-    function updateHudResources() {
-      resEl.wood.textContent = inventory.wood;
-      resEl.scrap.textContent = inventory.scrap;
-      resEl.fuel.textContent = inventory.fuel;
-      resEl.ice.textContent = inventory.ice;
-      resEl.sea.textContent = inventory.sea;
-      resEl.base.textContent = `🚛 Baza Lv.${baseState.level} | Ombor: ${baseState.storage}`;
+    // --- SURVIVAL HOLATI ---
+    const survival = {
+      hp: 100,
+      maxHp: 100,
+      hunger: 100,
+      maxHunger: 100,
+      lvl: 1,
+      xp: 0,
+      nextXp: 100,
+      weaponTier: 1,
+      bonusDmg: 0,
+      wood: 20,
+      stone: 15,
+      scrap: 10,
+      meat: 4,
+      spheres: 5,
+      baseLvl: 1,
+      baseStorage: 0,
+      driving: false,
+      mountedCreature: null,
+      swingTimer: 0,
+      timeOfDay: 0.22
+    };
+
+    function getTotalDamage() {
+      const w = weaponTiers[Math.min(weaponTiers.length - 1, survival.weaponTier - 1)];
+      return w.dmg + (survival.lvl - 1) * 5 + survival.bonusDmg;
+    }
+
+    function rebuildPlayerVisuals() {
+      playerWrapper.remove(playerCharacterMesh);
+      playerCharacterMesh = buildHumanCharacter(profile, survival.weaponTier, 1);
+      playerWrapper.add(playerCharacterMesh);
+    }
+
+    function applyProfileToWorld() {
+      rebuildPlayerVisuals();
+      saveProfile(profile);
+    }
+
+    function addXp(amount) {
+      survival.xp += amount;
+      if (survival.xp >= survival.nextXp) {
+        survival.xp -= survival.nextXp;
+        survival.lvl++;
+        survival.nextXp = Math.round(survival.nextXp * 1.35);
+        survival.maxHp += 20;
+        survival.hp = survival.maxHp;
+        survival.hunger = survival.maxHunger;
+        showToast(`⭐ LEVEL ${survival.lvl}! Umumiy zarar: ${getTotalDamage()}`);
+      }
+    }
+
+    function updateHud() {
+      const w = weaponTiers[Math.min(weaponTiers.length - 1, survival.weaponTier - 1)];
+      document.getElementById("hudPlayerName").textContent = profile.username;
+      document.getElementById("hudDmg").textContent = getTotalDamage();
+      document.getElementById("hudLvl").textContent = survival.lvl;
+      document.getElementById("hudWeaponName").textContent = `${w.name} (Lv.${w.tier})`;
+      document.getElementById("barHp").style.width = `${(survival.hp / survival.maxHp) * 100}%`;
+      document.getElementById("barHunger").style.width = `${(survival.hunger / survival.maxHunger) * 100}%`;
+      document.getElementById("barXp").style.width = `${(survival.xp / survival.nextXp) * 100}%`;
+
+      document.getElementById("resWood").textContent = survival.wood;
+      document.getElementById("resStone").textContent = survival.stone;
+      document.getElementById("resScrap").textContent = survival.scrap;
+      document.getElementById("resMeat").textContent = survival.meat;
+      document.getElementById("resSpheres").textContent = survival.spheres;
+      document.getElementById("resPets").textContent = creatures.filter(c => c.tamed).length;
+    }
+
+    // --- QUROL ASBOBLARNI KUCHAYTIRISH ---
+    function upgradeWeaponTier() {
+      if (isModalOpen) return;
+      if (survival.weaponTier >= weaponTiers.length) {
+        survival.bonusDmg += 10;
+        showToast(`⚡ Maksimal qurol! Qo‘shimcha +10 Zarar qo‘shildi (Jami: ${getTotalDamage()})`);
+        updateHud();
+        return;
+      }
+
+      const curW = weaponTiers[survival.weaponTier - 1];
+      if (survival.wood >= curW.costWood && survival.stone >= curW.costStone && survival.scrap >= curW.costScrap) {
+        survival.wood -= curW.costWood;
+        survival.stone -= curW.costStone;
+        survival.scrap -= curW.costScrap;
+        survival.weaponTier++;
+        rebuildPlayerVisuals();
+        addXp(35);
+        const nextW = weaponTiers[survival.weaponTier - 1];
+        showToast(`🎉 Qurol kuchaytirildi: ${nextW.name}! Zarar: ${getTotalDamage()}`);
+        updateHud();
+      } else {
+        showToast(`Kerak: ${curW.costWood}🪵 ${curW.costStone}🪨 ${curW.costScrap ? curW.costScrap + "⚙️" : ""}`);
+      }
+    }
+
+    // --- ZARBA BERISH VA RESURS YIG'ISH ---
+    function performAttack() {
+      if (isModalOpen || survival.swingTimer > 0) return;
+      survival.swingTimer = 0.35;
+      const dmg = getTotalDamage();
+
+      const px = playerWrapper.position.x;
+      const pz = playerWrapper.position.z;
+      const dirX = Math.sin(playerWrapper.rotation.y);
+      const dirZ = Math.cos(playerWrapper.rotation.y);
+      const hitX = px + dirX * 58;
+      const hitZ = pz + dirZ * 58;
+
+      for (const prop of harvestableProps) {
+        if (!prop.active) continue;
+        if (Math.hypot(hitX - prop.x, hitZ - prop.z) < 78 || Math.hypot(px - prop.x, pz - prop.z) < 78) {
+          prop.hp -= dmg;
+          prop.mesh.rotation.z = (Math.random() - 0.5) * 0.14;
+          if (prop.hp <= 0) {
+            prop.active = false;
+            prop.mesh.visible = false;
+            prop.respawn = 20;
+            const gainW = 7 + survival.weaponTier * 2;
+            survival.wood += gainW;
+            if (Math.random() < 0.4) survival.meat += 1;
+            addXp(18);
+            showToast(`🪓 Daraxt chopildi: +${gainW} Yog‘och (+18 XP)`);
+          } else {
+            showToast(`🪓 Daraxt joni: ${prop.hp}/${prop.maxHp}`);
+          }
+          updateHud();
+          return;
+        }
+      }
+
+      for (const node of crystalNodes) {
+        if (!node.active) continue;
+        if (Math.hypot(hitX - node.x, hitZ - node.z) < 78 || Math.hypot(px - node.x, pz - node.z) < 78) {
+          node.active = false;
+          node.mesh.visible = false;
+          node.respawnTimer = 18;
+          const gainR = 4 + survival.weaponTier * 2;
+          survival[node.type] += gainR;
+          addXp(15);
+          showToast(`⛏️ +${gainR} ${resConfig[node.type].label} yig‘ildi!`);
+          updateHud();
+          return;
+        }
+      }
+
+      for (const c of creatures) {
+        if (c.tamed) continue;
+        if (Math.hypot(hitX - c.x, hitZ - c.z) < 90 || Math.hypot(px - c.x, pz - c.z) < 90) {
+          c.hp = Math.max(10, c.hp - dmg);
+          c.mesh.position.y = 13;
+          setTimeout(() => { if (c.mesh) c.mesh.position.y = 4; }, 120);
+          if (c.hp <= c.maxHp * 0.5) {
+            showToast(`⚡ ${c.name} zaiflashdi (${c.hp}/${c.maxHp})! Endi [C] Bo‘ysundirishni bosing!`);
+          } else {
+            showToast(`⚔️ ${c.name} joni: ${c.hp}/${c.maxHp}`);
+          }
+          return;
+        }
+      }
+    }
+
+    // --- JONIVOR VA AMIKINLARNI BO'YSUNDIRISH ---
+    function tryTameCreature() {
+      if (isModalOpen) return;
+      if (survival.spheres <= 0) {
+        showToast("🔮 Amisfera qolmadi! '+2 Shar' tugmasi bilan yasang.");
+        return;
+      }
+
+      const px = playerWrapper.position.x;
+      const pz = playerWrapper.position.z;
+      let nearest = null;
+      let minD = 165;
+
+      for (const c of creatures) {
+        if (c.tamed) continue;
+        const d = Math.hypot(px - c.x, pz - c.z);
+        if (d < minD) {
+          minD = d;
+          nearest = c;
+        }
+      }
+
+      if (!nearest) {
+        showToast("Yaqinda bo‘ysundiriladigan Amikin yoki jonivor yo‘q!");
+        return;
+      }
+
+      if (nearest.hp <= nearest.maxHp * 0.5) {
+        survival.spheres--;
+        nearest.tamed = true;
+        nearest.hp = nearest.maxHp;
+        nearest.mesh.userData.collar.visible = true;
+        addXp(55);
+        showToast(`🎉 ${nearest.name} (${nearest.kind}) muvaffaqiyatli bo‘ysundirildi! (+55 XP)`);
+        updateHud();
+        renderTeamList();
+      } else {
+        showToast(`⚠️ ${nearest.name}ni bo‘ysundirish uchun avval [E] bilan jonini 50% dan kamaytiring!`);
+      }
+    }
+
+    // --- JAMOADAGI AMIKIN / JONIVORNI KUCHAYTIRISH VA EVOLYUTSIYA ---
+    function upgradeTamedCreature(petIndex) {
+      const pets = creatures.filter(c => c.tamed);
+      const pet = pets[petIndex];
+      if (!pet) return;
+
+      if (survival.meat < 2) {
+        showToast("🍖 Kuchaytirish uchun kamida 2 ta Go‘sht (🍖) kerak!");
+        return;
+      }
+
+      survival.meat -= 2;
+      pet.lvl += 1;
+      pet.maxHp += 35;
+      pet.hp = pet.maxHp;
+      pet.dmg += 8;
+
+      if (pet.lvl >= 3 && !pet.evolved) {
+        pet.evolved = true;
+        pet.dmg += 12;
+        pet.mesh.scale.setScalar(1.38);
+        pet.mesh.userData.collar.material.color.setHex(0xfacc15);
+        pet.mesh.userData.collar.material.emissive.setHex(0xeab308);
+        showToast(`🌟 EVOLYUTSIYA! ${pet.name} Lv.${pet.lvl} ga ko‘tarildi va kuchaydi!`);
+      } else {
+        pet.mesh.scale.setScalar(1 + (pet.lvl - 1) * 0.12);
+        showToast(`⬆️ ${pet.name} kuchaytirildi: Lv.${pet.lvl} | HP ${pet.maxHp} | Zarar ${pet.dmg}`);
+      }
+
+      updateHud();
+      renderTeamList();
+    }
+
+    function toggleMountCreature() {
+      if (isModalOpen) return;
+      if (survival.driving) {
+        showToast("Avval yuk mashinasidan [F] bilan tushing!");
+        return;
+      }
+      if (survival.mountedCreature) {
+        survival.mountedCreature.mesh.scale.setScalar(survival.mountedCreature.evolved ? 1.38 : 1 + (survival.mountedCreature.lvl - 1) * 0.12);
+        survival.mountedCreature = null;
+        playerWrapper.position.y = 4;
+        showToast("Ustidan tushdingiz.");
+        return;
+      }
+
+      const px = playerWrapper.position.x;
+      const pz = playerWrapper.position.z;
+      const nearPet = creatures.find(c => c.tamed && Math.hypot(px - c.x, pz - c.z) < 135);
+      if (nearPet) {
+        survival.mountedCreature = nearPet;
+        nearPet.mesh.scale.setScalar(1.45);
+        showToast(`🐎 ${nearPet.name} ustiga mindingiz! (1.65x tezlik)`);
+      } else {
+        showToast("Yaqinda bo‘ysundirilgan Amikin/jonivor yo‘q!");
+      }
+    }
+
+    function eatOrCook() {
+      if (isModalOpen) return;
+      const px = playerWrapper.position.x;
+      const pz = playerWrapper.position.z;
+      const nearFire = builtStructures.some(s => (s.type === "campfire" || s.type === "house") && Math.hypot(px - s.x, pz - s.z) < 165);
+
+      if (nearFire && survival.wood >= 3 && survival.meat < 3) {
+        survival.wood -= 3;
+        survival.meat += 3;
+        showToast("🔥 Gulxanda 3 ta ovqat pishirildi! (-3 Yog‘och)");
+        updateHud();
+        return;
+      }
+
+      if (survival.meat > 0) {
+        survival.meat--;
+        survival.hunger = Math.min(survival.maxHunger, survival.hunger + 35);
+        survival.hp = Math.min(survival.maxHp, survival.hp + 25);
+        showToast("🍖 Ovqat yeyildi! +35 To‘qlik, +25 Jon");
+        updateHud();
+      } else {
+        showToast("Ovqat yo‘q! Gulxan yonida [R] bosing yoki daraxt choping.");
+      }
+    }
+
+    function buildStructure(type) {
+      if (isModalOpen) return;
+      const px = playerWrapper.position.x + Math.sin(playerWrapper.rotation.y) * 75;
+      const pz = playerWrapper.position.z + Math.cos(playerWrapper.rotation.y) * 75;
+
+      if (type === "campfire") {
+        if (survival.wood >= 6) {
+          survival.wood -= 6;
+          spawnBuildingMesh("campfire", px, pz);
+          showToast("🔥 Gulxan qurildi!");
+        } else showToast("6 ta yog‘och kerak!");
+      } else if (type === "workbench") {
+        if (survival.wood >= 12 && survival.stone >= 8) {
+          survival.wood -= 12;
+          survival.stone -= 8;
+          spawnBuildingMesh("workbench", px, pz);
+          addXp(30);
+          showToast("🛠️ Dastgoh qurildi! (+30 XP)");
+        } else showToast("12 yog‘och va 8 tosh kerak!");
+      } else if (type === "house") {
+        if (survival.wood >= 25 && survival.stone >= 15) {
+          survival.wood -= 25;
+          survival.stone -= 15;
+          spawnBuildingMesh("house", px, pz);
+          addXp(75);
+          showToast("🏠 Baza uyi qurildi! (+75 XP)");
+        } else showToast("25 yog‘och va 15 tosh kerak!");
+      }
+      updateHud();
+    }
+
+    function craftSphere() {
+      if (isModalOpen) return;
+      if (survival.wood >= 5 && survival.stone >= 5) {
+        survival.wood -= 5;
+        survival.stone -= 5;
+        survival.spheres += 2;
+        showToast("🔮 +2 ta Amisfera yasaldi!");
+        updateHud();
+      } else {
+        showToast("5 yog‘och va 5 tosh kerak!");
+      }
+    }
+
+    function interactTruck() {
+      if (isModalOpen) return;
+      if (survival.mountedCreature) {
+        showToast("Avval ustidan [M] bilan tushing!");
+        return;
+      }
+      const dist = Math.hypot(playerWrapper.position.x - truckGroup.position.x, playerWrapper.position.z - truckGroup.position.z);
+      if (survival.driving) {
+        survival.driving = false;
+        playerWrapper.visible = true;
+        playerWrapper.position.set(truckGroup.position.x + 70, 4, truckGroup.position.z);
+        showToast("Ko‘chma bazadan tushdingiz.");
+        return;
+      }
+      if (dist < 180) {
+        if (survival.scrap > 0) {
+          survival.baseStorage += survival.scrap;
+          survival.scrap = 0;
+          if (survival.baseStorage >= survival.baseLvl * 15) survival.baseLvl++;
+          showToast(`🚛 Resurslar bazaga topshirildi! (Baza Lv.${survival.baseLvl})`);
+          updateHud();
+        } else {
+          survival.driving = true;
+          playerWrapper.visible = false;
+          showToast("🚛 Ko‘chma bazani haydayapsiz!");
+        }
+      } else {
+        showToast("Ko‘chma baza (sariq yuk mashinasi) yoniga boring!");
+      }
+    }
+
+    // --- JAMOA PANELI ---
+    function toggleTeamModal() {
+      const m = document.getElementById("teamModal");
+      const open = m.style.display === "block";
+      m.style.display = open ? "none" : "block";
+      if (!open) renderTeamList();
+    }
+
+    function renderTeamList() {
+      const list = document.getElementById("teamList");
+      const pets = creatures.filter(c => c.tamed);
+      if (pets.length === 0) {
+        list.innerHTML = `<div style="font-size:12px; color:#94a3b8;">Hali hech kim bo‘ysundirilmagan. Yovvoyini zaiflashtirib [C] bosing!</div>`;
+        return;
+      }
+      list.innerHTML = "";
+      pets.forEach((p, idx) => {
+        const div = document.createElement("div");
+        div.className = "pet-row";
+        div.innerHTML = `
+          <div class="pet-top">
+            <span>★ <b>${p.name}</b> <small style="color:#facc15;">Lv.${p.lvl}${p.evolved ? " 🌟" : ""}</small></span>
+            <span style="color:#4ade80;">HP ${p.hp} | ⚔️${p.dmg}</span>
+          </div>
+          <div class="pet-actions">
+            <button class="pet-btn upg" onclick="upgradeTamedCreature(${idx})">⬆️ Kuchaytir (2🍖)</button>
+            <button class="pet-btn" onclick="summonCreature(${idx})">📍 Chaqir</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function summonCreature(idx) {
+      const pets = creatures.filter(c => c.tamed);
+      const p = pets[idx];
+      if (p && survival.mountedCreature !== p) {
+        p.x = playerWrapper.position.x + 45;
+        p.z = playerWrapper.position.z + 30;
+        p.mesh.position.set(p.x, 4, p.z);
+        showToast(`🐾 ${p.name} yoningizga chaqirildi!`);
+      }
+    }
+
+    document.getElementById("btnToggleTeam").addEventListener("click", toggleTeamModal);
+
+    // --- SAQLASH (SAVE / LOAD) ---
+    function saveGameState(manual = false) {
+      try {
+        const saveObj = {
+          pos: { x: playerWrapper.position.x, z: playerWrapper.position.z },
+          truck: { x: truckGroup.position.x, z: truckGroup.position.z },
+          survival: {
+            hp: survival.hp, maxHp: survival.maxHp, hunger: survival.hunger, maxHunger: survival.maxHunger,
+            lvl: survival.lvl, xp: survival.xp, nextXp: survival.nextXp,
+            weaponTier: survival.weaponTier, bonusDmg: survival.bonusDmg,
+            wood: survival.wood, stone: survival.stone, scrap: survival.scrap,
+            meat: survival.meat, spheres: survival.spheres,
+            baseLvl: survival.baseLvl, baseStorage: survival.baseStorage
+          },
+          tamedPets: creatures.filter(c => c.tamed).map(c => ({
+            name: c.name, kind: c.kind, isWolf: c.isWolf, lvl: c.lvl, evolved: c.evolved,
+            hp: c.hp, maxHp: c.maxHp, dmg: c.dmg
+          }))
+        };
+        localStorage.setItem("amikin_survival_save_v1", JSON.stringify(saveObj));
+        if (manual) showToast("💾 O‘yin jarayoni saqlandi!");
+      } catch (e) {}
+    }
+
+    function loadGameState() {
+      try {
+        const raw = JSON.parse(localStorage.getItem("amikin_survival_save_v1"));
+        if (!raw) return;
+        if (raw.survival) Object.assign(survival, raw.survival);
+        if (raw.pos) playerWrapper.position.set(raw.pos.x, 4, raw.pos.z);
+        if (raw.truck) truckGroup.position.set(raw.truck.x, 4, raw.truck.z);
+        if (Array.isArray(raw.tamedPets)) {
+          raw.tamedPets.forEach((tp, i) => {
+            const sp = Object.values(creatureSpecies).find(s => s.name === tp.name) || creatureSpecies.forest;
+            const mesh = createCreatureMesh(sp, !!tp.isWolf);
+            const px = playerWrapper.position.x + 50 + i * 25;
+            const pz = playerWrapper.position.z + 40;
+            mesh.position.set(px, 4, pz);
+            mesh.userData.collar.visible = true;
+            if (tp.evolved) {
+              mesh.scale.setScalar(1.38);
+              mesh.userData.collar.material.color.setHex(0xfacc15);
+              mesh.userData.collar.material.emissive.setHex(0xeab308);
+            } else {
+              mesh.scale.setScalar(1 + ((tp.lvl || 1) - 1) * 0.12);
+            }
+            scene.add(mesh);
+            creatures.push({
+              name: tp.name, kind: tp.kind || "Amikin", isWolf: !!tp.isWolf,
+              mesh, x: px, z: pz, lvl: tp.lvl || 1, evolved: !!tp.evolved,
+              hp: tp.hp || 100, maxHp: tp.maxHp || 100, dmg: tp.dmg || 10,
+              tamed: true, vx: 0, vz: 0, aiTimer: 0, atkCd: 0
+            });
+          });
+        }
+      } catch (e) {}
     }
 
     // --- PROFIL OYNASI HODISALARI ---
@@ -976,51 +1603,26 @@
     let isModalOpen = true;
 
     document.getElementById("inpUsername").addEventListener("input", e => {
-      profile.username = e.target.value.trim() || "OmonQolgan";
+      profile.username = e.target.value.trim() || "Behruz820";
       document.getElementById("previewName").textContent = profile.username;
     });
 
     document.querySelectorAll("#genderOptions .opt-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        profile.gender = btn.dataset.val;
-        syncPreviewUI();
-      });
+      btn.addEventListener("click", () => { profile.gender = btn.dataset.val; syncPreviewUI(); });
     });
-
     document.querySelectorAll("#hairStyleOptions .opt-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        profile.hairStyle = btn.dataset.val;
-        syncPreviewUI();
-      });
+      btn.addEventListener("click", () => { profile.hairStyle = btn.dataset.val; syncPreviewUI(); });
     });
-
     document.querySelectorAll("#hairColorSwatches .swatch").forEach(s => {
-      s.addEventListener("click", () => {
-        profile.hairColor = s.dataset.color;
-        syncPreviewUI();
-      });
+      s.addEventListener("click", () => { profile.hairColor = s.dataset.color; syncPreviewUI(); });
     });
-    document.getElementById("customHairColor").addEventListener("input", e => {
-      profile.hairColor = e.target.value;
-      syncPreviewUI();
-    });
-
+    document.getElementById("customHairColor").addEventListener("input", e => { profile.hairColor = e.target.value; syncPreviewUI(); });
     document.querySelectorAll("#clothColorSwatches .swatch").forEach(s => {
-      s.addEventListener("click", () => {
-        profile.clothColor = s.dataset.color;
-        syncPreviewUI();
-      });
+      s.addEventListener("click", () => { profile.clothColor = s.dataset.color; syncPreviewUI(); });
     });
-    document.getElementById("customClothColor").addEventListener("input", e => {
-      profile.clothColor = e.target.value;
-      syncPreviewUI();
-    });
-
+    document.getElementById("customClothColor").addEventListener("input", e => { profile.clothColor = e.target.value; syncPreviewUI(); });
     document.querySelectorAll("#skinColorSwatches .swatch").forEach(s => {
-      s.addEventListener("click", () => {
-        profile.skinColor = s.dataset.color;
-        syncPreviewUI();
-      });
+      s.addEventListener("click", () => { profile.skinColor = s.dataset.color; syncPreviewUI(); });
     });
 
     document.getElementById("btnRandomProfile").addEventListener("click", () => {
@@ -1048,63 +1650,23 @@
       applyProfileToWorld();
       isModalOpen = false;
       profileModal.style.display = "none";
+      updateHud();
     }
 
     document.getElementById("btnEnterGame").addEventListener("click", closeProfileModal);
     document.getElementById("btnOpenProfile").addEventListener("click", openProfileModal);
 
+    loadGameState();
+    rebuildPlayerVisuals();
     syncPreviewUI();
+    updateHud();
 
-    // --- BOSHQARUV (KLAVIATURA + JOYSTIK) ---
+    // Har 30 soniyada avtomatik saqlash
+    setInterval(() => { if (!isModalOpen) saveGameState(false); }, 30000);
+
+    // --- BOSHQARUV ---
     const keys = {};
     let cameraYaw = 0;
-
-    function gatherNearbyResource() {
-      if (isModalOpen) return;
-      const px = playerWrapper.position.x;
-      const pz = playerWrapper.position.z;
-      for (const node of resourceNodes) {
-        if (!node.active) continue;
-        if (Math.hypot(px - node.x, pz - node.z) < 130) {
-          node.active = false;
-          node.mesh.visible = false;
-          node.respawnTimer = 15;
-          inventory[node.type] += 1;
-          updateHudResources();
-          break;
-        }
-      }
-    }
-
-    function interactWithBase() {
-      if (isModalOpen) return;
-      const dist = Math.hypot(
-        playerWrapper.position.x - truckGroup.position.x,
-        playerWrapper.position.z - truckGroup.position.z
-      );
-
-      if (baseState.driving) {
-        baseState.driving = false;
-        playerWrapper.visible = true;
-        playerWrapper.position.set(truckGroup.position.x + 70, 4, truckGroup.position.z);
-        return;
-      }
-
-      if (dist < 175) {
-        const total = inventory.wood + inventory.scrap + inventory.fuel + inventory.ice + inventory.sea;
-        if (total > 0) {
-          baseState.storage += total;
-          inventory.wood = inventory.scrap = inventory.fuel = inventory.ice = inventory.sea = 0;
-          if (baseState.storage >= baseState.level * 10) {
-            baseState.level += 1;
-          }
-          updateHudResources();
-        } else {
-          baseState.driving = true;
-          playerWrapper.visible = false;
-        }
-      }
-    }
 
     window.addEventListener("keydown", e => {
       const code = e.code;
@@ -1115,13 +1677,14 @@
       }
       if (isModalOpen) return;
       keys[code] = true;
-      if (code === "Space") gatherNearbyResource();
-      if (code === "KeyF") interactWithBase();
+      if (code === "Space" || code === "KeyE") performAttack();
+      if (code === "KeyC") tryTameCreature();
+      if (code === "KeyR") eatOrCook();
+      if (code === "KeyM") toggleMountCreature();
+      if (code === "KeyQ") upgradeWeaponTier();
+      if (code === "KeyF") interactTruck();
     });
     window.addEventListener("keyup", e => { keys[e.code] = false; });
-
-    document.getElementById("btnGather").addEventListener("click", gatherNearbyResource);
-    document.getElementById("btnBase").addEventListener("click", interactWithBase);
 
     // Sensor joystik
     const joyZone = document.getElementById("joyZone");
@@ -1129,31 +1692,20 @@
     let joyVec = { x: 0, y: 0 };
     let joyActive = false;
 
-    joyZone.addEventListener("pointerdown", e => {
-      joyActive = true;
-      joyZone.setPointerCapture(e.pointerId);
-    });
+    joyZone.addEventListener("pointerdown", e => { joyActive = true; joyZone.setPointerCapture(e.pointerId); });
     joyZone.addEventListener("pointermove", e => {
       if (!joyActive) return;
       const rect = joyZone.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const maxR = 38;
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+      const maxR = 36;
       const dist = Math.min(maxR, Math.hypot(dx, dy));
       const ang = Math.atan2(dy, dx);
-      const kx = Math.cos(ang) * dist;
-      const ky = Math.sin(ang) * dist;
-      joyKnob.style.transform = `translate(${kx}px, ${ky}px)`;
-      joyVec.x = kx / maxR;
-      joyVec.y = ky / maxR;
+      joyKnob.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px)`;
+      joyVec.x = (Math.cos(ang) * dist) / maxR;
+      joyVec.y = (Math.sin(ang) * dist) / maxR;
     });
-    function resetJoy() {
-      joyActive = false;
-      joyVec = { x: 0, y: 0 };
-      joyKnob.style.transform = "translate(0px, 0px)";
-    }
+    function resetJoy() { joyActive = false; joyVec = { x: 0, y: 0 }; joyKnob.style.transform = "translate(0px, 0px)"; }
     joyZone.addEventListener("pointerup", resetJoy);
     joyZone.addEventListener("pointercancel", resetJoy);
 
@@ -1165,10 +1717,13 @@
       const nz = (e.clientY - rect.top) / rect.height - 0.5;
       const tx = Math.max(-HALF + 200, Math.min(HALF - 200, nx * WORLD_SIZE));
       const tz = Math.max(-HALF + 200, Math.min(HALF - 200, nz * WORLD_SIZE));
-      if (baseState.driving) {
-        truckGroup.position.set(tx, 4, tz);
-      }
+      if (survival.driving) truckGroup.position.set(tx, 4, tz);
       playerWrapper.position.set(tx, 4, tz);
+      if (survival.mountedCreature) {
+        survival.mountedCreature.x = tx;
+        survival.mountedCreature.z = tz;
+        survival.mountedCreature.mesh.position.set(tx, 4, tz);
+      }
     });
 
     function drawMinimap(px, pz) {
@@ -1189,6 +1744,13 @@
       mctx.strokeStyle = "#f59e0b";
       mctx.lineWidth = 2;
       mctx.stroke();
+
+      creatures.forEach(c => {
+        if (c.tamed) {
+          mctx.fillStyle = c.evolved ? "#facc15" : "#38bdf8";
+          mctx.fillRect((c.x / WORLD_SIZE + 0.5) * w - 2.5, (c.z / WORLD_SIZE + 0.5) * h - 2.5, 5, 5);
+        }
+      });
 
       const bx = (truckGroup.position.x / WORLD_SIZE + 0.5) * w;
       const bz = (truckGroup.position.z / WORLD_SIZE + 0.5) * h;
@@ -1220,8 +1782,19 @@
         return;
       }
 
-      if (keys["KeyQ"]) cameraYaw += dt * 1.8;
-      if (keys["KeyE"]) cameraYaw -= dt * 1.8;
+      if (keys["KeyZ"]) cameraYaw += dt * 1.8;
+      if (keys["KeyX"]) cameraYaw -= dt * 1.8;
+
+      survival.timeOfDay = (survival.timeOfDay + dt * 0.004) % 1;
+      const isNight = survival.timeOfDay > 0.68 || survival.timeOfDay < 0.12;
+      document.getElementById("timeText").textContent = isNight ? "🌙 Tun" : (survival.timeOfDay > 0.52 ? "🌅 Shom" : "☀️ Kunduz");
+      hemiLight.intensity = isNight ? 0.35 : 0.88;
+      dirLight.intensity = isNight ? 0.35 : 1.12;
+
+      survival.hunger = Math.max(0, survival.hunger - dt * 0.42);
+      if (survival.hunger <= 0) {
+        survival.hp = Math.max(1, survival.hp - dt * 1.2);
+      }
 
       let moveX = joyVec.x;
       let moveZ = joyVec.y;
@@ -1241,42 +1814,76 @@
         const worldDX = moveX * cosY + moveZ * sinY;
         const worldDZ = moveZ * cosY - moveX * sinY;
 
-        const speed = baseState.driving ? 2800 : 950;
-        const targetObj = baseState.driving ? truckGroup : playerWrapper;
+        let speed = 950;
+        if (survival.driving) speed = 2800;
+        else if (survival.mountedCreature) speed = survival.mountedCreature.evolved ? 1750 : 1550;
 
+        const targetObj = survival.driving ? truckGroup : playerWrapper;
         targetObj.position.x = Math.max(-HALF + 150, Math.min(HALF - 150, targetObj.position.x + worldDX * speed * dt));
         targetObj.position.z = Math.max(-HALF + 150, Math.min(HALF - 150, targetObj.position.z + worldDZ * speed * dt));
         targetObj.rotation.y = Math.atan2(worldDX, worldDZ);
 
-        if (baseState.driving) {
+        if (survival.driving) {
           playerWrapper.position.copy(truckGroup.position);
+        } else if (survival.mountedCreature) {
+          survival.mountedCreature.x = playerWrapper.position.x;
+          survival.mountedCreature.z = playerWrapper.position.z;
+          survival.mountedCreature.mesh.position.set(playerWrapper.position.x, 4, playerWrapper.position.z);
+          survival.mountedCreature.mesh.rotation.y = playerWrapper.rotation.y;
+          playerWrapper.position.y = 28;
         } else {
+          playerWrapper.position.y = 4;
           walkTime += dt * 14;
           const parts = playerCharacterMesh.userData;
           if (parts && parts.leftLeg) {
             parts.leftLeg.rotation.x = Math.sin(walkTime) * 0.65;
             parts.rightLeg.rotation.x = -Math.sin(walkTime) * 0.65;
             parts.leftArm.rotation.x = -Math.sin(walkTime) * 0.5;
-            parts.rightArm.rotation.x = Math.sin(walkTime) * 0.5;
           }
         }
-      } else if (!baseState.driving && playerCharacterMesh.userData.leftLeg) {
+      } else if (!survival.driving && playerCharacterMesh.userData.leftLeg) {
         const parts = playerCharacterMesh.userData;
         parts.leftLeg.rotation.x = 0;
         parts.rightLeg.rotation.x = 0;
         parts.leftArm.rotation.x = 0;
-        parts.rightArm.rotation.x = 0;
       }
 
-      let nearRes = null;
+      if (survival.swingTimer > 0) {
+        survival.swingTimer = Math.max(0, survival.swingTimer - dt);
+        if (playerCharacterMesh.userData.rightArmPivot) {
+          playerCharacterMesh.userData.rightArmPivot.rotation.x = -Math.sin((0.35 - survival.swingTimer) * 18) * 1.4;
+        }
+      } else if (playerCharacterMesh.userData.rightArmPivot) {
+        playerCharacterMesh.userData.rightArmPivot.rotation.x = 0;
+      }
+
       const px = playerWrapper.position.x;
       const pz = playerWrapper.position.z;
 
-      for (const node of resourceNodes) {
+      for (const s of builtStructures) {
+        if ((s.type === "campfire" || s.type === "house") && Math.hypot(px - s.x, pz - s.z) < 170) {
+          survival.hp = Math.min(survival.maxHp, survival.hp + dt * (s.type === "house" ? 8 : 4));
+        }
+      }
+
+      for (const prop of harvestableProps) {
+        if (!prop.active) {
+          prop.respawn -= dt;
+          if (prop.respawn <= 0) {
+            prop.active = true;
+            prop.hp = prop.maxHp;
+            prop.mesh.visible = true;
+            prop.mesh.rotation.z = 0;
+          }
+        }
+      }
+
+      let nearObjLabel = null;
+      for (const node of crystalNodes) {
         if (node.active) {
-          node.mesh.rotation.y += dt * 1.8;
-          if (!nearRes && Math.hypot(px - node.x, pz - node.z) < 130) {
-            nearRes = node;
+          node.mesh.rotation.y += dt * 1.5;
+          if (!nearObjLabel && Math.hypot(px - node.x, pz - node.z) < 85) {
+            nearObjLabel = `⛏️ ${resConfig[node.type].label} yig‘ish uchun [E / Space] bosing`;
           }
         } else {
           node.respawnTimer -= dt;
@@ -1287,27 +1894,99 @@
         }
       }
 
-      const distBase = Math.hypot(px - truckGroup.position.x, pz - truckGroup.position.z);
-      if (baseState.driving) {
+      // Bo'ysundirilgan va yovvoyi Amikinlar / Jonivorlar AI
+      let nearWild = null;
+      for (const c of creatures) {
+        if (c === survival.mountedCreature) continue;
+        if (c.atkCd > 0) c.atkCd -= dt;
+
+        if (c.tamed) {
+          const enemy = creatures.find(o => !o.tamed && Math.hypot(o.x - px, o.z - pz) < 350);
+          if (enemy) {
+            const d = Math.hypot(enemy.x - c.x, enemy.z - c.z);
+            c.mesh.rotation.y = Math.atan2(enemy.x - c.x, enemy.z - c.z);
+            if (d > 50) {
+              c.x += ((enemy.x - c.x) / d) * 760 * dt;
+              c.z += ((enemy.z - c.z) / d) * 760 * dt;
+            } else if (c.atkCd <= 0) {
+              c.atkCd = 0.85;
+              enemy.hp = Math.max(10, enemy.hp - c.dmg);
+            }
+          } else {
+            const dP = Math.hypot(px - c.x, pz - c.z);
+            if (dP > 110) {
+              c.mesh.rotation.y = Math.atan2(px - c.x, pz - c.z);
+              c.x += ((px - c.x) / dP) * 780 * dt;
+              c.z += ((pz - c.z) / dP) * 780 * dt;
+            }
+          }
+        } else {
+          const dP = Math.hypot(px - c.x, pz - c.z);
+          if (dP < 155 && !nearWild) nearWild = c;
+
+          const aggro = (isNight || c.isWolf) ? 350 : 230;
+          if (dP < aggro) {
+            c.mesh.rotation.y = Math.atan2(px - c.x, pz - c.z);
+            if (dP > 50) {
+              const spd = (isNight || c.isWolf) ? 540 : 410;
+              c.x += ((px - c.x) / dP) * spd * dt;
+              c.z += ((pz - c.z) / dP) * spd * dt;
+            } else if (c.atkCd <= 0) {
+              c.atkCd = 1.2;
+              survival.hp -= c.dmg;
+              if (survival.hp <= 0) {
+                survival.hp = survival.maxHp;
+                survival.hunger = 80;
+                survival.driving = false;
+                survival.mountedCreature = null;
+                playerWrapper.visible = true;
+                playerWrapper.position.set(220, 4, 220);
+                showToast("💀 Joningiz tugadi! Shahrcha bazasiga qaytdingiz.");
+              }
+            }
+          } else {
+            c.aiTimer -= dt;
+            if (c.aiTimer <= 0) {
+              c.aiTimer = 2 + rand() * 3;
+              const ang = rand() * Math.PI * 2;
+              c.vx = Math.cos(ang) * 160;
+              c.vz = Math.sin(ang) * 160;
+              c.mesh.rotation.y = Math.atan2(c.vx, c.vz);
+            }
+            c.x = Math.max(-HALF + 200, Math.min(HALF - 200, c.x + c.vx * dt));
+            c.z = Math.max(-HALF + 200, Math.min(HALF - 200, c.z + c.vz * dt));
+          }
+        }
+        c.mesh.position.set(c.x, 4 + Math.abs(Math.sin(Date.now() * 0.008)) * 2.5, c.z);
+      }
+
+      const distTruck = Math.hypot(px - truckGroup.position.x, pz - truckGroup.position.z);
+      if (survival.driving) {
         actionPrompt.style.display = "block";
         actionPrompt.textContent = "🚛 Mashinadasiz — Tushish uchun [F] bosing";
-      } else if (distBase < 175) {
+      } else if (nearWild) {
+        actionPrompt.style.display = "block";
+        actionPrompt.textContent = nearWild.hp <= nearWild.maxHp * 0.5
+          ? `🔗 ${nearWild.name} (${nearWild.kind}) tayyor (${nearWild.hp}/${nearWild.maxHp}) — Bo‘ysundirish uchun [C] bosing!`
+          : `🐾 ${nearWild.name} (${nearWild.kind}, ${nearWild.hp}/${nearWild.maxHp}) — Zarba uchun [E] bosing`;
+      } else if (distTruck < 180) {
         actionPrompt.style.display = "block";
         actionPrompt.textContent = "🚛 Ko‘chma Baza: Resurs topshirish yoki haydash uchun [F] bosing";
-      } else if (nearRes) {
+      } else if (nearObjLabel) {
         actionPrompt.style.display = "block";
-        actionPrompt.textContent = `⛏️ ${resConfig[nearRes.type].label} yig‘ish uchun [Space] bosing`;
+        actionPrompt.textContent = nearObjLabel;
       } else {
         actionPrompt.style.display = "none";
       }
 
       const curZone = getZone(px, pz);
-      zoneBadge.textContent = `3D Zona: ${curZone.name}`;
-      zoneBadge.style.borderColor = curZone.color;
-      coordsBox.textContent = `X: ${Math.round(px)} | Z: ${Math.round(pz)} | Qahramon: ${profile.username}`;
+      document.getElementById("zoneText").textContent = `Zona: ${curZone.name}`;
+      document.getElementById("zoneBadge").style.borderColor = curZone.color;
+      document.getElementById("coordsBox").textContent = `X: ${Math.round(px)} | Z: ${Math.round(pz)} | Baza Lv.${survival.baseLvl} (${survival.baseStorage})`;
+      updateHud();
 
-      const camDist = baseState.driving ? 620 : 320;
-      const camHeight = baseState.driving ? 360 : 190;
+      const camDist = survival.driving ? 620 : (survival.mountedCreature ? 420 : 320);
+      const camHeight = survival.driving ? 360 : (survival.mountedCreature ? 240 : 190);
       camera.position.set(
         px + Math.sin(cameraYaw) * camDist,
         camHeight,
