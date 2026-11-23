@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Amikin Survival 3D — Bo‘ysundirish, Qurollar va Kuchaytirish Tizimi</title>
+  <title>Amikin Survival 3D — Eslatmalar Menyusi va Ish Belgilari</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     html, body {
@@ -101,9 +101,10 @@
     /* --- O'YIN HUD --- */
     .hud-top {
       position: fixed; top: 10px; left: 10px; z-index: 10;
-      display: flex; flex-direction: column; gap: 6px; pointer-events: none;
+      display: flex; flex-direction: column; gap: 6px;
       width: 255px;
     }
+    .hud-top-nonpointer { pointer-events: none; display: flex; flex-direction: column; gap: 6px; }
     .player-card {
       background: rgba(15, 23, 42, 0.9); border: 2px solid #22c55e;
       padding: 9px 12px; border-radius: 12px; backdrop-filter: blur(6px);
@@ -125,6 +126,61 @@
     .coords-box {
       background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(148, 163, 184, 0.25);
       padding: 4px 10px; border-radius: 8px; font-size: 11px; color: #cbd5e1;
+    }
+
+    /* CHAP TARAFDA OCHILIB-YOPILADIGAN ESLATMALAR MENYUSI */
+    .notes-drawer {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid rgba(56, 189, 248, 0.55);
+      border-radius: 11px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    }
+    .notes-toggle {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.95);
+      border: none;
+      color: #e0f2fe;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .notes-toggle:hover { background: rgba(51, 65, 85, 0.95); }
+    .notes-body {
+      display: none;
+      padding: 8px 11px;
+      font-size: 11px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+    }
+    .notes-body.open { display: block; }
+    .notes-body li { margin-left: 14px; margin-bottom: 4px; }
+    .notes-body li:last-child { margin-bottom: 0; }
+
+    /* FAQAT ISH PAYTIDA KO'RINADIGAN BELGI */
+    #workSignBadge {
+      position: fixed;
+      top: 102px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 16;
+      display: none;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #38bdf8;
+      color: #f8fafc;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
     }
 
     .res-panel {
@@ -221,6 +277,7 @@
       .joy-zone { display: block; }
       .res-panel { top: 122px; }
       .toast-banner { top: 175px; }
+      #workSignBadge { top: 210px; }
     }
   </style>
 </head>
@@ -316,25 +373,48 @@
   <!-- --- 2. ASOSIY 3D O'YIN --- -->
   <div id="sceneContainer"></div>
 
-  <!-- YUQORI CHAP HUD: HP, OCHLIK, XP, QUROL, ZONA -->
+  <!-- YUQORI CHAP HUD: HP, OCHLIK, XP, QUROL, ZONA VA OCHILIB-YOPILADIGAN ESLATMALAR -->
   <div class="hud-top">
-    <div class="player-card">
-      <div class="p-head">
-        <span id="hudPlayerName">Behruz820</span>
-        <span>⚔️ <span id="hudDmg">25</span> <span class="lvl-tag">LVL <span id="hudLvl">1</span></span></span>
+    <div class="hud-top-nonpointer">
+      <div class="player-card">
+        <div class="p-head">
+          <span id="hudPlayerName">Behruz820</span>
+          <span>⚔️ <span id="hudDmg">25</span> <span class="lvl-tag">LVL <span id="hudLvl">1</span></span></span>
+        </div>
+        <div class="weapon-tag" id="hudWeaponName">🪓 Yog‘och Bolta (Lv.1)</div>
+        <div class="bar-bg"><div class="bar-hp" id="barHp"></div></div>
+        <div class="bar-bg" style="height:6px;"><div class="bar-hunger" id="barHunger"></div></div>
+        <div class="bar-bg" style="height:4px; margin-bottom:0;"><div class="bar-xp" id="barXp"></div></div>
       </div>
-      <div class="weapon-tag" id="hudWeaponName">🪓 Yog‘och Bolta (Lv.1)</div>
-      <div class="bar-bg"><div class="bar-hp" id="barHp"></div></div>
-      <div class="bar-bg" style="height:6px;"><div class="bar-hunger" id="barHunger"></div></div>
-      <div class="bar-bg" style="height:4px; margin-bottom:0;"><div class="bar-xp" id="barXp"></div></div>
+
+      <div class="zone-badge" id="zoneBadge">
+        <span id="zoneText">Zona: Shahrcha</span>
+        <span id="timeText" style="font-size:12px; color:#fde047;">☀️ Kunduz</span>
+      </div>
+      <div class="coords-box" id="coordsBox">X: 0 | Z: 0 | Baza Lv.1</div>
     </div>
 
-    <div class="zone-badge" id="zoneBadge">
-      <span id="zoneText">Zona: Shahrcha</span>
-      <span id="timeText" style="font-size:12px; color:#fde047;">☀️ Kunduz</span>
+    <!-- CHAP TARAFDA OCHILIB-YOPILADIGAN ESLATMALAR MENYUSI -->
+    <div class="notes-drawer">
+      <button type="button" class="notes-toggle" id="btnToggleNotes" aria-expanded="false">
+        <span>📝 Eslatmalar</span>
+        <span id="notesArrow">▾</span>
+      </button>
+      <div class="notes-body" id="notesBody">
+        <ul>
+          <li><b>WASD</b> — harakat, <b>Z/X</b> — kamerani burish.</li>
+          <li><b>E / Space</b> — daraxt chopish, tosh olish, zarba.</li>
+          <li>Jonivor/Amikin joni 50% dan tushgach <b>C</b> bilan bo‘ysundiring.</li>
+          <li><b>M</b> — bo‘ysundirilgan jonivorga minish, <b>R</b> — ovqat/gulxan.</li>
+          <li><b>Q</b> — qurolni kuchaytirish, <b>F</b> — ko‘chma baza.</li>
+          <li><b>Jamoa</b> menyusida jonivorni <b>2🍖</b> bilan kuchaytiring/evolyutsiya qiling.</li>
+        </ul>
+      </div>
     </div>
-    <div class="coords-box" id="coordsBox">X: 0 | Z: 0 | Baza Lv.1</div>
   </div>
+
+  <!-- FAQAT ISH PAYTIDA KO'RINADIGAN BELGI -->
+  <div id="workSignBadge"></div>
 
   <!-- YUQORI MARKAZ: RESURSLAR, JAMOA VA SAQLASH -->
   <div class="res-panel">
@@ -365,7 +445,7 @@
   <div class="toast-banner" id="toastBanner">Amikin va Jonivorlarni zaiflashtirib [C] bilan bo‘ysundiring! [Z/X] — Kamera</div>
   <div class="action-prompt" id="actionPrompt"></div>
 
-  <!-- PASTDAGI HARAKAT, BO'YSUNDIRISH, QUROL VA QURILISH PANELI -->
+  <!-- PASTDAGI AMIKIN HARAKAT, BO'YSUNDIRISH, QUROL VA QURILISH PANELI -->
   <div class="bottom-dock">
     <button type="button" class="act-btn atk" onclick="performAttack()">⚔️ Zarba [E]</button>
     <button type="button" class="act-btn tame" onclick="tryTameCreature()">🔗 Bo‘ysundirish [C]</button>
@@ -389,6 +469,49 @@
     const WORLD_SIZE = 60000;
     const HALF = WORLD_SIZE / 2;
     const TOWN_RADIUS = 11500;
+
+    // --- CHAP MENYU: OCHILIB-YOPILADIGAN ESLATMALAR ---
+    const btnToggleNotes = document.getElementById("btnToggleNotes");
+    const notesBody = document.getElementById("notesBody");
+    const notesArrow = document.getElementById("notesArrow");
+
+    btnToggleNotes.addEventListener("click", () => {
+      const isOpen = notesBody.classList.toggle("open");
+      btnToggleNotes.setAttribute("aria-expanded", String(isOpen));
+      notesArrow.textContent = isOpen ? "▴" : "▾";
+    });
+
+    // --- FAQAT ISH PAYTIDA KO'RINADIGAN BELGI BOSHQARUVI ---
+    const workSignBadge = document.getElementById("workSignBadge");
+    let actionSignText = "";
+    let actionSignTimer = null;
+
+    function triggerActionSign(label, durationMs = 650) {
+      actionSignText = label;
+      clearTimeout(actionSignTimer);
+      actionSignTimer = setTimeout(() => {
+        actionSignText = "";
+      }, durationMs);
+    }
+
+    function updateWorkSign(isMoving) {
+      let activeLabel = "";
+      if (actionSignText) {
+        activeLabel = actionSignText;
+      } else if (isMoving) {
+        if (survival.driving) activeLabel = "🚛 BAZA HAYDALMOQDA";
+        else if (survival.mountedCreature) activeLabel = `🐎 ${survival.mountedCreature.name.toUpperCase()} USTIDA HARAKAT`;
+        else activeLabel = "🏃 HARAKATDA";
+      }
+
+      if (activeLabel) {
+        workSignBadge.textContent = activeLabel;
+        workSignBadge.style.display = "block";
+      } else {
+        workSignBadge.textContent = "";
+        workSignBadge.style.display = "none";
+      }
+    }
 
     // --- PROFIL MA'LUMOTLARI ---
     const defaultProfile = {
@@ -475,7 +598,6 @@
       rightArm.castShadow = true;
       rightArmPivot.add(rightArm);
 
-      // Qurol darajasiga mos bolta
       const wSpec = weaponTiers[Math.min(weaponTiers.length - 1, Math.max(0, weaponTier - 1))];
       const axeGroup = new THREE.Group();
       axeGroup.position.set(0, -14, 4);
@@ -997,7 +1119,6 @@
       const eyeR = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), eyeMat);
       eyeR.position.set(3.5, 20, isWolf ? 21 : 18.8);
 
-      // Bo'ysundirilganlik / Evolyutsiya halqasi
       const collar = new THREE.Mesh(
         new THREE.TorusGeometry(9.5, 1.3, 8, 22),
         new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x0284c7, emissiveIntensity: 0.85 })
@@ -1036,7 +1157,6 @@
       });
     }
 
-    // 130 ta Amikin + 45 ta Yovvoyi Bo'ri (Jonivor)
     for (let i = 0; i < 175; i++) {
       let cx, cz;
       const isWolf = i >= 130;
@@ -1205,6 +1325,7 @@
     // --- QUROL ASBOBLARNI KUCHAYTIRISH ---
     function upgradeWeaponTier() {
       if (isModalOpen) return;
+      triggerActionSign("🪓 QUROL KUCHAYTIRILMOQDA", 700);
       if (survival.weaponTier >= weaponTiers.length) {
         survival.bonusDmg += 10;
         showToast(`⚡ Maksimal qurol! Qo‘shimcha +10 Zarar qo‘shildi (Jami: ${getTotalDamage()})`);
@@ -1232,6 +1353,7 @@
     function performAttack() {
       if (isModalOpen || survival.swingTimer > 0) return;
       survival.swingTimer = 0.35;
+      triggerActionSign("⚔️ ZARBA / ISH JARAYONI", 550);
       const dmg = getTotalDamage();
 
       const px = playerWrapper.position.x;
@@ -1297,6 +1419,7 @@
     // --- JONIVOR VA AMIKINLARNI BO'YSUNDIRISH ---
     function tryTameCreature() {
       if (isModalOpen) return;
+      triggerActionSign("🔗 BO‘YSUNDIRISH JARAYONI", 700);
       if (survival.spheres <= 0) {
         showToast("🔮 Amisfera qolmadi! '+2 Shar' tugmasi bilan yasang.");
         return;
@@ -1341,6 +1464,7 @@
       const pet = pets[petIndex];
       if (!pet) return;
 
+      triggerActionSign(`⬆️ ${pet.name.toUpperCase()} KUCHAYTIRILMOQDA`, 700);
       if (survival.meat < 2) {
         showToast("🍖 Kuchaytirish uchun kamida 2 ta Go‘sht (🍖) kerak!");
         return;
@@ -1370,6 +1494,7 @@
 
     function toggleMountCreature() {
       if (isModalOpen) return;
+      triggerActionSign("🐎 MINISH HOLATI", 650);
       if (survival.driving) {
         showToast("Avval yuk mashinasidan [F] bilan tushing!");
         return;
@@ -1396,6 +1521,7 @@
 
     function eatOrCook() {
       if (isModalOpen) return;
+      triggerActionSign("🍖 OVQATLANISH / PISHIRISH", 650);
       const px = playerWrapper.position.x;
       const pz = playerWrapper.position.z;
       const nearFire = builtStructures.some(s => (s.type === "campfire" || s.type === "house") && Math.hypot(px - s.x, pz - s.z) < 165);
@@ -1421,6 +1547,7 @@
 
     function buildStructure(type) {
       if (isModalOpen) return;
+      triggerActionSign("🏗️ QURILISH ISHI", 700);
       const px = playerWrapper.position.x + Math.sin(playerWrapper.rotation.y) * 75;
       const pz = playerWrapper.position.z + Math.cos(playerWrapper.rotation.y) * 75;
 
@@ -1452,6 +1579,7 @@
 
     function craftSphere() {
       if (isModalOpen) return;
+      triggerActionSign("🔮 AMISFERA YASALMOQDA", 650);
       if (survival.wood >= 5 && survival.stone >= 5) {
         survival.wood -= 5;
         survival.stone -= 5;
@@ -1465,6 +1593,7 @@
 
     function interactTruck() {
       if (isModalOpen) return;
+      triggerActionSign("🚛 BAZA AMALIYOTI", 650);
       if (survival.mountedCreature) {
         showToast("Avval ustidan [M] bilan tushing!");
         return;
@@ -1534,6 +1663,7 @@
         p.x = playerWrapper.position.x + 45;
         p.z = playerWrapper.position.z + 30;
         p.mesh.position.set(p.x, 4, p.z);
+        triggerActionSign(`🐾 ${p.name.toUpperCase()} CHAQIRILDI`, 650);
         showToast(`🐾 ${p.name} yoningizga chaqirildi!`);
       }
     }
@@ -1661,7 +1791,6 @@
     syncPreviewUI();
     updateHud();
 
-    // Har 30 soniyada avtomatik saqlash
     setInterval(() => { if (!isModalOpen) saveGameState(false); }, 30000);
 
     // --- BOSHQARUV ---
@@ -1724,6 +1853,7 @@
         survival.mountedCreature.z = tz;
         survival.mountedCreature.mesh.position.set(tx, 4, tz);
       }
+      triggerActionSign("🧭 KOORDINATAGA O‘TISH", 650);
     });
 
     function drawMinimap(px, pz) {
@@ -1848,6 +1978,8 @@
         parts.leftArm.rotation.x = 0;
       }
 
+      updateWorkSign(moving);
+
       if (survival.swingTimer > 0) {
         survival.swingTimer = Math.max(0, survival.swingTimer - dt);
         if (playerCharacterMesh.userData.rightArmPivot) {
@@ -1894,7 +2026,6 @@
         }
       }
 
-      // Bo'ysundirilgan va yovvoyi Amikinlar / Jonivorlar AI
       let nearWild = null;
       for (const c of creatures) {
         if (c === survival.mountedCreature) continue;
